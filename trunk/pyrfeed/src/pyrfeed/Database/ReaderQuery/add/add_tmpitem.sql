@@ -1,0 +1,26 @@
+INSERT INTO
+    _tmpItem
+(
+    google_id,
+    original_id,
+    link,
+    content,
+    title,
+    author,
+    published,
+    updated,
+    crawled
+)
+VALUES
+(
+    '%(google_id)s',
+    '%(original_id)s',
+    '%(link)s',
+    '%(content)s',
+    '%(title)s',
+    '%(author)s',
+    '%(published)d',
+    '%(updated)d',
+    '%(crawled)d'
+)
+;

@@ -1,0 +1,17 @@
+* decent setup.py with py2exe support
+* pypi support
+* installer for windows
+* web site/public svn
+
+* A lot of test !!!
+* Real plugin support
+* more wx GUI
+* another command line parser
+* help and doc
+
+
+*** DONE ***
+
+* better config support (with registration)
+* return feed info with GoogleReader
+* store feed info in database
