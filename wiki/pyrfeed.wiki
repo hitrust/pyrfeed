@@ -1,0 +1,11 @@
+#pyrfeed overview
+
+= Introduction =
+
+pyrfeed is RSS client and a framework that read RSS/Atom feeds, and can use Google Reader as a Database backend.
+
+= Documentation =
+
+* [UserDocumentation User documentation]
+* [DeveloperDocumentation Developer documentation]
+* [GoogleReaderAPI Google Reader API documentation]
