@@ -6,6 +6,10 @@ pyrfeed is RSS client and a framework that read RSS/Atom feeds, and can use Goog
 
 = Documentation =
 
-* [UserDocumentation User documentation]
-* [DeveloperDocumentation Developer documentation]
-* [GoogleReaderAPI Google Reader API documentation]
+ * [UserDocumentation User documentation]
+ * [DeveloperDocumentation Developer documentation]
+ * [GoogleReaderAPI Google Reader API documentation]
+
+= Screenshots =
+
+ This section needs screenshots
