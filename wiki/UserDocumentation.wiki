@@ -1,0 +1,7 @@
+ * [InstallingPyrfeedUnderWindows Installing pyrfeed under windows] (_Note: The pyrfeed windows installer is note ready yet_)
+ * [InstallingPyrfeedFromTgz Installing pyrfeed from a .tar.gz]
+ * [UsingPyrfeedInDatabaseMode Using pyrfeed in database mode]
+ * [UsingPyrfeedInDirectConnexionMode Using pyrfeed in direct connexion mode]
+
+
+
