@@ -13,14 +13,14 @@ INSERT INTO
 )
 VALUES
 (
-    '%(google_id)s',
-    '%(original_id)s',
-    '%(link)s',
-    '%(content)s',
-    '%(title)s',
-    '%(author)s',
-    '%(published)d',
-    '%(updated)d',
-    '%(crawled)d'
+    %(google_id)r,
+    %(original_id)r,
+    %(link)r,
+    %(content)r,
+    %(title)r,
+    %(author)r,
+    %(published)d,
+    %(updated)d,
+    %(crawled)d
 )
 ;

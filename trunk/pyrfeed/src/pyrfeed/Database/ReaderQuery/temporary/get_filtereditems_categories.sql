@@ -10,4 +10,3 @@ WHERE
     ItemCategorie.idCategorie = Categorie.idCategorie
 ORDER BY
     Categorie.shortname
-

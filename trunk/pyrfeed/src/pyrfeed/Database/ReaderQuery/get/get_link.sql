@@ -3,4 +3,4 @@ SELECT
 FROM
     Item
 WHERE
-    google_id = '%(google_id)s'
+    google_id = %(google_id)r
