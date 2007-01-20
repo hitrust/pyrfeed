@@ -16,7 +16,7 @@ class Reader(GoogleBase) :
     def synchro(self) :
         # First, we synchronize categories
         for action in self._database.get_actions() :
-            print action
+            # print action
             if action['action_type'] == 'add' :
                 result = self._get_googlereader().edit_tag( entry=action['google_id'], add=action['categorie'] )
             if action['action_type'] == 'del' :

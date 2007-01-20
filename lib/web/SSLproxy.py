@@ -76,7 +76,6 @@ class ConnectHTTPHandler(urllib2.HTTPHandler):
         urllib2.HTTPHandler.__init__(self, debuglevel)
 
     def do_open(self, http_class, req):
-        print "HTTTP [%r,%r]" % (http_class, req)
         if self.proxy is not None:
             req.set_proxy(self.proxy, 'http')
         return urllib2.HTTPHandler.do_open(self, ProxyHTTPConnection, req)
@@ -89,7 +88,6 @@ class ConnectHTTPSHandler(urllib2.HTTPSHandler):
         urllib2.HTTPSHandler.__init__(self, debuglevel)
 
     def do_open(self, http_class, req):
-        print "HTTTPS [%r,%r]" % (http_class, req)
         if self.proxy is not None:
             req.set_proxy(self.proxy, 'https')
         return urllib2.HTTPSHandler.do_open(self, ProxyHTTPSConnection, req)
