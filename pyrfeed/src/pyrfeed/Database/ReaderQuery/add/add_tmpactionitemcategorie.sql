@@ -9,10 +9,10 @@ INSERT INTO
 )
 VALUES
 (
-    '%(google_id)s',
-    '%(action_type)s',
-    '%(categorie_name)s',
-    '%(categorie_shortname)s',
+    %(google_id)r,
+    %(action_type)r,
+    %(categorie_name)r,
+    %(categorie_shortname)r,
     1
 )
 ;

@@ -7,8 +7,8 @@ INSERT INTO
 )
 VALUES
 (
-    '%(google_id)s',
-    '%(categorie_name)s',
-    '%(categorie_shortname)s'
+    %(google_id)r,
+    %(categorie_name)r,
+    %(categorie_shortname)r
 )
 ;

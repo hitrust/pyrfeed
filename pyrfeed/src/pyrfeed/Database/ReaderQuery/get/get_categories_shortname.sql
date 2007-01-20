@@ -5,7 +5,7 @@ FROM
     ItemCategorie,
     Categorie
 WHERE
-    Item.google_id = '%(google_id)s'
+    Item.google_id = %(google_id)r
     AND
     Item.idItem = ItemCategorie.idItem
     AND
