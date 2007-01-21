@@ -81,7 +81,7 @@ class GoogleBase(object) :
         return get_feed_args
 
 register_key( 'google/max_count', int, doc='The size of the feed to fetch from google', default=200 )
-register_key( 'google/include_read', bool, doc='If true, will fetch all items, otherwise will fetch only unread ones', default=None )
+register_key( 'google/include_read', bool, doc='If true, will fetch all items, otherwise will fetch only unread ones', default=True )
 register_key( 'url', str, doc='The url of the google feed to fetch', default=None )
 register_key( 'label', str, doc='The label of google reader to fetch', default=None )
 register_key( 'feed', str, doc='The feed to fetch on google', default=None )

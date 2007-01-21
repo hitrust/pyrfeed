@@ -9,7 +9,7 @@ class ElementInfoList(object) :
 
     def register(self,element_info_class) :
         if len(element_info_class.names) > 0 :
-            if (self._default_info is not None) and (self._default_info.priority <= element_info_class.priority) :
+            if (self._default_info is None) or (self._default_info.priority <= element_info_class.priority) :
                 self._default_info = element_info_class
             if element_info_class.ui_name is not None :
                 self._name_by_ui_name[element_info_class.ui_name] = element_info_class.names[0]

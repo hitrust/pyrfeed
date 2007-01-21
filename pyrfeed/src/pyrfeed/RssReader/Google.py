@@ -127,5 +127,6 @@ class Reader(GoogleBase) :
 
 class RssReaderInfoGoogle(RssReaderInfo) :
     names = ['Google','direct']
+    priority = 60
     def get_rss_reader(self) :
         return Reader(self._config)
