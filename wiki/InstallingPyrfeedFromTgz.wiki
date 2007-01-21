@@ -1,3 +1,4 @@
+#labels Featured
 = Installing from .tar.gz =
 
 For now, installing pyrfeed from .tar.gz need few command lines for installations. If you don't like command line, just wait for another release.
@@ -22,5 +23,4 @@ Now pyrfeed is ready to launch ! That's that simple.
 To launch [pyrfeed], just go to the folder/directory where pyrfeed.py is, and start it.
 
 *Note* : pyrfeed is by default configure to start in [GoogleCache] mode, and with [wxauiInterface]. You can change userinterface and logical layer with command line option, or within pyrfeed.
-
 
