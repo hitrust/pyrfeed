@@ -1,0 +1,26 @@
+= Installing from .tar.gz =
+
+For now, installing pyrfeed from .tar.gz need few command lines for installations. If you don't like command line, just wait for another release.
+
+Requierements to use pyrfeed :
+ # python 2.5 (python 2.4 will perhaps be supported in the futur)
+ # wxPython 2.8 (aui support is needed)
+
+Actions :
+ # Download the .tar.gz file
+ # Uncompress it in the folder/directory you like
+ # start a command line interpreter (cmd under windows, bash/tcsh/whateversh under unices, idontevenknow under macos)
+ # Go to that folder/directory with command line (use "cd")
+   * Note : For now, every pyrfeed command must be launched from the directory where pyrfeed.py is.
+ # Tell pyrfeed your google login/passwd (of course, replace _yourlogin_ and _yourpasswd_ with your login and your password):
+   * pyrfeed.py --login=_yourlogin_ --passwd=_yourpasswd_ --save
+ # You're behing a web proxy ? Just tell pyrfeed...
+   * pyrfeed.py --proxy_host=_yourproxyhost_ --proxyport=_yourproxyport_ --save
+
+Now pyrfeed is ready to launch ! That's that simple.
+
+To launch [pyrfeed], just go to the folder/directory where pyrfeed.py is, and start it.
+
+*Note* : pyrfeed is by default configure to start in [GoogleCache] mode, and with [wxauiInterface]. You can change userinterface and logical layer with command line option, or within pyrfeed.
+
+
