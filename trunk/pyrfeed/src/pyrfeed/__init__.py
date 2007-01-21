@@ -1,7 +1,7 @@
 import sys
 from pyrfeed.Config import Config
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 # this is not a plugin based yet because of those imports.
 import pyrfeed.Gui.commandline
