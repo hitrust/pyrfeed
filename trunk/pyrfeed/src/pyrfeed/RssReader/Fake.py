@@ -99,6 +99,7 @@ class Reader(object) :
 
 class RssReaderInfoFake(RssReaderInfo) :
     names = ['Fake','test']
+    priority = 10
     def get_rss_reader(self) :
         return Reader(self._config)
     def get_doc(self) :

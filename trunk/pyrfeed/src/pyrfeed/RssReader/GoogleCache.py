@@ -191,6 +191,7 @@ class Reader(GoogleBase) :
 
 class RssReaderInfoGoogleCache(RssReaderInfo) :
     names = ['GoogleCache','db']
+    priority = 70
     def get_rss_reader(self) :
         return Reader(self._config)
     def get_doc(self) :

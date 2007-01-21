@@ -404,6 +404,6 @@ class GuiInfoWx(GuiInfo) :
 
 register_key( 'pagesize', int, doc='Size of a page of items', default=30 )
 register_key( 'wx/sashposition', int, doc='Position of the Sash seperation in pixels', default=200 )
-register_key( 'wx/htmlwindow', str, doc='HTML Window component to use', default='simple' )
+register_key( 'wx/htmlwindow', str, doc='HTML Window component to use', default='best' )
 
 # 'gui/next' will be handled elsewere for registration
