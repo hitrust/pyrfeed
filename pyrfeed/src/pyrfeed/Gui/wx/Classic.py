@@ -4,6 +4,7 @@ from pyrfeed.Gui.wx.Reader import GuiInfoWx
 
 class RSSReaderFrameClassic(RSSReaderFrame) :
     def _create_components(self):
+        self._create_tool_bar()
         self._splitter_window = wx.SplitterWindow(self, style=wx.SP_3D|wx.SP_NOBORDER|wx.SP_ARROW_KEYS|wx.SP_WRAP)
         self._create_combo_filter( self )
         self._create_listbox_title( self._splitter_window )
