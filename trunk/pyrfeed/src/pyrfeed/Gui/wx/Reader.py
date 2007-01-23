@@ -16,6 +16,8 @@ from pyrfeed.Gui.Info import GuiInfo
 from pyrfeed.Gui.InfoList import gui_info_list
 from pyrfeed.Config import register_key
 
+from pyrfeed import __version__ as pyrfeed_version
+
 class RSSReaderFrame(wx.Frame,MenuProvider):
     def __init__(self, config, *args, **kwds):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -50,6 +52,9 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
 
         self.SetNextGuiMenu()
 
+    def _create_tool_bar( self ) :
+        self._tool_bar = self.CreateToolBar(style=wx.TB_HORIZONTAL)
+
     def _create_combo_filter( self, parent ) :
         self._combo_filter = FilterControl(parent)
 
@@ -76,49 +81,307 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
     def _set_properties(self) :
         self._status_bar.SetFieldsCount(2)
         self.SetStatusBar(self._status_bar)
-        menu_content = [
-            ('&File',                                       None,                               '' ),
-            ('-/&Synchro'+'\tCtrl+Shift+S',                 self.Synchro,                       '', [(wx.ACCEL_CTRL, ord('S')),
-                                                                                                     (wx.ACCEL_SHIFT, wx.WXK_F5)] ),
-            ('-/&Reload'+'\tCtrl+Shift+R',                  self.Reload,                        '', [(wx.ACCEL_CTRL, ord('R')),
-                                                                                                     (wx.ACCEL_NORMAL, wx.WXK_F5)] ),
-            ('-/-',),
-            ('-/S&witch interface',),
-            ('-/-/-',),
-            ('-/-',),
-            ('-/&Quit',                                     self.Quit,                          '' ),
-            ('&Edit',                                       None,                               '' ),
-            ('-/&Select'+'\tCtrl+Shift+Y',                  self._listbox_title.SelectItem,     '', [(wx.ACCEL_CTRL, wx.WXK_SPACE),
-                                                                                                     (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, wx.WXK_SPACE)] ),
-            ('-/Select and goto ne&xt'+'\tCtrl+Shift+I',    self._listbox_title.SelectItemNext, '', [(wx.ACCEL_NORMAL, wx.WXK_INSERT)] ),
-            ('-/-',),
-            ('-/&Open link'+'\tCtrl+Shift+O',               self.OpenInWebBrowser,              '', [(wx.ACCEL_CTRL, wx.WXK_RETURN)] ),
-            ('-/&Open links'+'\tCtrl+Shift+Alt+O',          self.OpenMultiInWebBrowser,         '', [] ),
-            ('-/-',),
-            ('-/&Previous'+'\tCtrl+Shift+K',                self._listbox_title.Prev,           '', [] ),
-            ('-/&Next'+'\tCtrl+Shift+J',                    self._listbox_title.Next,           '', [] ),
-            ('-/P&age',),
-            ('-/P&age/&Previous'+'\tCtrl+Shift+L',          self.OnPreviousPage,                '', [] ),
-            ('-/P&age/&Next'+'\tCtrl+Shift+H',              self.OnNextPage,                    '', [] ),
-            ('-/-',),
-            ('-/Mark as &Read'+'\tCtrl+Shift+M',            self.MarkAsRead,                    '', [] ),
-            ('-/Mark as &Unread'+'\tCtrl+Shift+U',          self.MarkAsUnread,                  '', [] ),
-            ('-/-',),
-            ('-/Add Star',                                  self.AddStar,                       '', [] ),
-            ('-/Del Star',                                  self.DelStar,                       '', [] ),
-            ('-/-',),
-            ('-/Add Public',                                self.AddPublic,                     '', [] ),
-            ('-/Del Public',                                self.DelPublic,                     '', [] ),
-            ('-/-',),
-            ('-/Add &Label',                                None,                               '', [] ),
-            ('-/-/-',),
-            ('-/Del La&bel',                                None,                               '', [] ),
-            ('-/-/-',),
-            ('-/-',),
-            ('-/Add &Filter'+'\tAlt+SPACE',                 self.FocusFilter,                   '', [] ),
+
+        self._events = {
+            'SYNCHRO' : {
+                'action' : self.Synchro,
+                'bitmap' : 'synchro',
+                'accels' : [
+                    ('Ctrl','Shift','S'),
+                    ('Ctrl','S'),
+                    ('Shift','F5'),
+                    ],
+                'help' : 'Synchronize with server',
+                },
+            'RELOAD' : {
+                'action' : self.Reload,
+                'bitmap' : 'reload',
+                'accels' : [
+                    ('Ctrl','Shift','R'),
+                    ('Ctrl','R'),
+                    ('F5'),
+                    ],
+                'help' : 'Reload entry list',
+                },
+            'QUIT' : {
+                'action' : self.Quit,
+                'bitmap' : 'quit',
+                'help' : 'Quit',
+                },
+            'SELECT' : {
+                'action' : self._listbox_title.SelectItem,
+                'bitmap' : 'select',
+                'accels' : [
+                    ('Ctrl','Shift','Y'),
+                    ('Ctrl','SPACE'),
+                    ('Ctrl','Shift','SPACE'),
+                    ],
+                'help' : '',
+                },
+            'SELECTNEXT' : {
+                'action' : self._listbox_title.SelectItemNext,
+                'bitmap' : 'selectnext',
+                'accels' : [
+                    ('Ctrl','Shift','I'),
+                    ('INSERT'),
+                    ],
+                'help' : '',
+                },
+            'OPENLINK' : {
+                'action' : self.OpenInWebBrowser,
+                'bitmap' : 'openlink',
+                'accels' : [
+                    ('Ctrl','Shift','O'),
+                    ('Ctrl','RETURN'),
+                    ],
+                'help' : '',
+                },
+            'OPENLINKS' : {
+                'action' : self.OpenMultiInWebBrowser,
+                'bitmap' : 'openlinks',
+                'accels' : [
+                    ('Ctrl','Alt','Shift','O'),
+                    ],
+                'help' : '',
+                },
+            'PREVIOUS' : {
+                'action' : self._listbox_title.Prev,
+                'bitmap' : 'previous',
+                'accels' : [
+                    ('Ctrl','Shift','K'),
+                    ],
+                'help' : '',
+                },
+            'NEXT' : {
+                'action' : self._listbox_title.Next,
+                'bitmap' : 'next',
+                'accels' : [
+                    ('Ctrl','Shift','J'),
+                    ],
+                'help' : '',
+                },
+            'PREVIOUSPAGE' : {
+                'action' : self.OnPreviousPage,
+                'bitmap' : 'previouspage',
+                'accels' : [
+                    ('Ctrl','Shift','L'),
+                    ],
+                'help' : '',
+                },
+            'NEXTPAGE' : {
+                'action' : self.OnNextPage,
+                'bitmap' : 'nextpage',
+                'accels' : [
+                    ('Ctrl','Shift','H'),
+                    ],
+                'help' : '',
+                },
+            'MARKASREAD' : {
+                'action' : self.MarkAsRead,
+                'bitmap' : 'markasread',
+                'accels' : [
+                    ('Ctrl','Shift','M'),
+                    ],
+                'help' : '',
+                },
+            'MARKASUNREAD' : {
+                'action' : self.MarkAsUnread,
+                'bitmap' : 'markasunread',
+                'accels' : [
+                    ('Ctrl','Shift','U'),
+                    ],
+                'help' : '',
+                },
+            'ADDSTAR' : {
+                'action' : self.AddStar,
+                'bitmap' : 'addstar',
+                'accels' : [
+                    ],
+                'help' : '',
+                },
+            'DELSTAR' : {
+                'action' : self.DelStar,
+                'bitmap' : '',
+                'accels' : [
+                    ],
+                'help' : '',
+                },
+            'ADDPUBLIC'      : {
+                'action' : self.AddPublic,
+                'bitmap' : 'addpublic',
+                'accels' : [
+                    ],
+                'help' : 'Add public status',
+                },
+            'DELPUBLIC' : {
+                'action' : self.DelPublic,
+                'bitmap' : '',
+                'accels' : [
+                    ],
+                'help' : 'Del public status',
+                },
+            'ADDFILTER' : {
+                'action' : self.FocusFilter,
+                'bitmap' : '',
+                'accels' : [
+                    ('Alt','SPACE'),
+                    ],
+                'help' : 'Set focus to filter component',
+                },
+            'HELPDOC' : {
+                'action' : self.OnHelpDoc,
+                'bitmap' : 'helpdoc',
+                'accels' : [
+                    ('F1',),
+                    ],
+                'help' : 'Read online doc (not much now)',
+                },
+            'HELPBUG' : {
+                'action' : self.OnHelpIssues,
+                'bitmap' : 'helpbug',
+                'accels' : [
+                    ],
+                'help' : 'Submit a bug',
+                },
+            'HELPNEWFEATURE' : {
+                'action' : self.OnHelpIssues,
+                'bitmap' : 'helpfeature',
+                'accels' : [
+                    ],
+                'help' : 'Request new feature',
+                },
+            'HELPSITE' : {
+                'action' : self.OnHelpWebSite,
+                'bitmap' : 'helpsite',
+                'accels' : [
+                    ],
+                'help' : 'Web site',
+                },
+            'ABOUT' : {
+                'action' : self.OnAbout,
+                'bitmap' : 'about',
+                'accels' : [
+                    ('Ctrl','F1'),
+                    ],
+                'help' : 'About pyrfeed',
+                },
+
+            }
+
+        for event_name in self._events :
+            event = self._events[event_name]
+            if 'action' not in event :
+                event['action'] = None
+            if 'bitmap' not in event :
+                event['bitmap'] = 'none'
+            if event['bitmap'] == '' :
+                event['bitmap'] = 'none'
+            if 'accels' not in event :
+                event['accels'] = []
+            if 'help' not in event :
+                event['help'] = ''
+            if 'id' not in event :
+                event['id'] = wx.NewId()
+
+        menu_order = [
+            ('&File',                                       ),
+            ('-/&Synchro',                                  'SYNCHRO' ),
+            ('-/&Reload',                                   'RELOAD' ),
+            ('-/-',                                         ),
+            ('-/S&witch interface',                         ),
+            ('-/-/-',                                       ),
+            ('-/-',                                         ),
+            ('-/&Quit',                                     'QUIT' ),
+            ('&Edit',                                       ),
+            ('-/&Select',                                   'SELECT' ),
+            ('-/Select and goto ne&xt',                     'SELECTNEXT' ),
+            ('-/-',                                         ),
+            ('-/&Open link',                                'OPENLINK' ),
+            ('-/&Open links',                               'OPENLINKS' ),
+            ('-/-',                                         ),
+            ('-/&Previous',                                 'PREVIOUS' ),
+            ('-/&Next',                                     'NEXT' ),
+            ('-/P&age',                                     ),
+            ('-/P&age/&Previous',                           'PREVIOUSPAGE' ),
+            ('-/P&age/&Next',                               'NEXTPAGE' ),
+            ('-/-',                                         ),
+            ('-/Mark as &Read',                             'MARKASREAD' ),
+            ('-/Mark as &Unread',                           'MARKASUNREAD' ),
+            ('-/-',                                         ),
+            ('-/Add Star',                                  'ADDSTAR' ),
+            ('-/Del Star',                                  'DELSTAR' ),
+            ('-/-',                                         ),
+            ('-/Add Public',                                'ADDPUBLIC' ),
+            ('-/Del Public',                                'DELPUBLIC' ),
+            ('-/-',                                         ),
+            ('-/Add &Label',                                ),
+            ('-/-/-',                                       ),
+            ('-/Del La&bel',                                ),
+            ('-/-/-',                                       ),
+            ('-/-',                                         ),
+            ('-/Add &Filter',                               'ADDFILTER' ),
+            ('&Help',                                       ),
+            ('&Help/Online &Doc (not much now)',            'HELPDOC' ),
+            ('&Help/Report a bug',                          'HELPBUG' ),
+            ('&Help/Ask for new features',                  'HELPNEWFEATURE' ),
+            ('&Help/Website',                               'HELPSITE' ),
+            ('-/-',                                         ),
+            ('&Help/About',                                 'ABOUT' ),
+
             ]
 
+        toolbar_order = [
+            'SYNCHRO',
+            'RELOAD',
+            '',
+            'SELECTNEXT',
+            '',
+            'PREVIOUS',
+            'NEXT',
+            '',
+            'PREVIOUSPAGE',
+            'NEXTPAGE',
+            '',
+            'OPENLINK',
+            'OPENLINKS',
+            '',
+            'MARKASREAD',
+            'MARKASUNREAD',
+            '',
+            'ADDSTAR',
+            'DELSTAR',
+            '',
+            'ADDPUBLIC',
+            'DELPUBLIC',
+            '',
+            'HELPDOC',
+            'HELPBUG',
+            'HELPNEWFEATURE',
+            'HELPSITE',
+            '',
+            'QUIT',
+            ]
+
+        menu_content = []
+        for menu_order_line in menu_order :
+            if len(menu_order_line) == 1 :
+                menu_content.append((menu_order_line[0],))
+            elif len(menu_order_line) >= 2 :
+                menu_path = menu_order_line[0]
+                event_name = menu_order_line[1]
+                event = self._events[event_name]
+                accels = []
+                if len(event['accels']) >= 1 :
+                    accel_main = event['accels'][0]
+                    for accel in event['accels'][1:] :
+                        pass
+                        # accels.append(accel)
+                    menu_path+='\t'+'+'.join(accel_main)
+
+                menu_content.append((menu_path,event['action'],event['help'],accels,event['id'],wx.Bitmap(os.path.join('..','res','toolbar',event['bitmap']+'.png'))))
+
         self.SetMenuContent(self,menu_content)
+
 
         self.SetTitle("RSS Reader")
 
@@ -135,6 +398,15 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
             self.SetIcon(self._icon)
 
         self._combo_filter.SetValue('')
+
+        for event_name in toolbar_order :
+            if event_name in self._events :
+                event = self._events[event_name]
+                self._tool_bar.AddTool(event['id'],wx.Bitmap(os.path.join('..','res','toolbar',event['bitmap']+'.png')),shortHelpString=event['help'])
+            else :
+                self._tool_bar.AddSeparator()
+
+        self._tool_bar.Realize()
 
     def _bind_events(self) :
         self._listbox_title.Bind(wx.EVT_LISTBOX, self.OnTitleSelected)
@@ -377,6 +649,24 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         self.Populate(same_titles=True)
         busy = None
 
+    def OnHelpDoc(self, event=None) :
+        webbrowser.open('http://code.google.com/p/pyrfeed/wiki/pyrfeed')
+
+    def OnHelpIssues(self, event=None) :
+        webbrowser.open('http://code.google.com/p/pyrfeed/issues/list')
+
+    def OnHelpWebSite(self, event=None) :
+        webbrowser.open('http://code.google.com/p/pyrfeed')
+
+    def OnAbout(self, event=None) :
+        adi = wx.AboutDialogInfo()
+        adi.SetCopyright('GPL')
+        adi.SetDevelopers(['Gissehel'])
+        adi.SetName('pyrfeed')
+        adi.SetVersion(pyrfeed_version)
+        adi.SetWebSite('http://code.google.com/p/pyrfeed')
+        adi.SetIcon(wx.Icon(os.path.join('..','res','pyrfeed-64x64.png'),wx.BITMAP_TYPE_ANY))
+        wx.AboutBox(adi)
 
 def get_simple_app() :
     if hasattr(get_simple_app,'_simple_app') :

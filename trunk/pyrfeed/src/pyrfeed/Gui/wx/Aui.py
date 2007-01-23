@@ -4,6 +4,7 @@ from pyrfeed.Gui.wx.Reader import GuiInfoWx
 
 class RSSReaderFrameAui(RSSReaderFrame):
     def _create_components(self):
+        self._create_tool_bar()
         self._create_combo_filter( self )
         self._create_listbox_title( self )
         self._create_window_html( self )
@@ -43,6 +44,10 @@ class RSSReaderFrameAui(RSSReaderFrame):
         flags &= ~wx.aui.AUI_MGR_VENETIAN_BLINDS_HINT
         flags &= ~wx.aui.AUI_MGR_RECTANGLE_HINT
         self._mgr.SetFlags(flags)
+
+        self._mgr.GetArtProvider().SetColor(wx.aui.AUI_DOCKART_INACTIVE_CAPTION_COLOUR, wx.Colour(0xff,0xff,0xff))
+        self._mgr.GetArtProvider().SetColor(wx.aui.AUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, wx.Colour(0xaa,0xaa,0xaa))
+
 
 class GuiInfoWxAui(GuiInfoWx) :
     names = ['aui','wxaui']

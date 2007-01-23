@@ -66,15 +66,21 @@ class MenuProvider(object) :
                 if menu_item['id'] == -1 :
                     menu_item['id'] = wx.NewId()
 
+                wxmenuitem = None
+
                 # menu structure
                 if menu_item['path'] in submenus :
-                    submenus[menu_item['parent']].AppendMenu(menu_item['id'], menu_item['name'], submenus[menu_item['path']], menu_item['help'])
+                    wxmenuitem = wx.MenuItem(submenus[menu_item['parent']], menu_item['id'], menu_item['name'], menu_item['help'], subMenu=submenus[menu_item['path']] )
                 else :
-                    #print menu_item['name']
                     if menu_item['name'] == '-' :
-                        submenus[menu_item['parent']].Append(wx.ID_SEPARATOR, menu_item['name'], menu_item['help'])
+                        wxmenuitem = wx.MenuItem(submenus[menu_item['parent']], wx.ID_SEPARATOR, menu_item['name'], menu_item['help'])
                     else :
-                        submenus[menu_item['parent']].Append(menu_item['id'], menu_item['name'], menu_item['help'])
+                        wxmenuitem = wx.MenuItem(submenus[menu_item['parent']], menu_item['id'], menu_item['name'], menu_item['help'])
+
+                if wxmenuitem is not None :
+                    if menu_item['bitmap'] is not None :
+                        wxmenuitem.SetBitmap(menu_item['bitmap'])
+                    submenus[menu_item['parent']].AppendItem(wxmenuitem)
 
                 # Bind action
                 if menu_item['action'] != None :
@@ -124,48 +130,6 @@ class MenuProvider(object) :
         return menu
 
 
-    # def UpdateMenu( self, remove=[], add=[], menubar=None ) :
-    #     """ Update the menu using 'add' and 'removed' that contains same
-    #         arguments as menu_content in SetMenuContent.
-    #
-    #         For removed 'menu_content', only name is important.
-    #
-    #         we can even work on an external menubar, but default is to
-    #         work on the one created by SetMenuContent
-    #     """
-    #
-    #     # First, we don't know if the menu hasn't been modified "manually",
-    #     # so we rescan the menu_bar (and we don't use any structure
-    #     # already used before)
-    #
-    #     menu_items = {}
-    #     submenus = {}
-    #
-    #     if menubar is None :
-    #         menubar = self.__menubar
-    #
-    #     for menu,menulabel in menubar.GetMenus() :
-    #         submenus[menulabel] = menu
-    #         path_list = [menulabel]
-    #         def walk_threw_menu(menu,path_list) :
-    #             for item in menu.GetMenuItems() :
-    #                 path_list.append(item.GetLabel())
-    #                 path = "/".join(path_list)
-    #                 menu_items[path] = item
-    #                 if  item.GetSubMenu() is not None :
-    #                     submenus[path] = menu
-    #                     walk_threw_menu(item.GetSubMenu(),path_list)
-    #                 path_list[-1:] = []
-    #         walk_threw_menu(menu,path_list)
-    #
-    #
-    #     current_path=[]
-    #
-    #     for menu_tuple in remove :
-    #         menu_item = self.__get_menu_item(menu_tuple,current_path)
-    #         menu_item['path']
-
-
     def __get_menu_item(self, menu, current_path=[]) :
         menu_item = {}
         menu_item['path'] = menu[0]
@@ -197,6 +161,10 @@ class MenuProvider(object) :
         menu_item['id'] = -1
         if len(menu) > 4 :
             menu_item['id'] = menu[4]
+
+        menu_item['bitmap'] = None
+        if len(menu) > 5 :
+            menu_item['bitmap'] = menu[5]
 
         current_path[:] = menu_item['list']
 
