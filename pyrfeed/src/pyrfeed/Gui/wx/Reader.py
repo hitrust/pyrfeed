@@ -201,7 +201,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 },
             'DELSTAR' : {
                 'action' : self.DelStar,
-                'bitmap' : '',
+                'bitmap' : 'delstar',
                 'accels' : [
                     ],
                 'help' : 'Del star to selected items',
@@ -215,7 +215,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 },
             'DELPUBLIC' : {
                 'action' : self.DelPublic,
-                'bitmap' : '',
+                'bitmap' : 'delpublic',
                 'accels' : [
                     ],
                 'help' : 'Del public status to selected items',
