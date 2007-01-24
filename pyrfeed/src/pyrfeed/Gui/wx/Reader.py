@@ -116,7 +116,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                     ('Ctrl','SPACE'),
                     ('Ctrl','Shift','SPACE'),
                     ],
-                'help' : '',
+                'help' : 'Select current item',
                 },
             'SELECTNEXT' : {
                 'action' : self._listbox_title.SelectItemNext,
@@ -125,7 +125,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                     ('Ctrl','Shift','I'),
                     ('INSERT'),
                     ],
-                'help' : '',
+                'help' : 'Select current item and go to next one',
                 },
             'OPENLINK' : {
                 'action' : self.OpenInWebBrowser,
@@ -134,7 +134,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                     ('Ctrl','Shift','O'),
                     ('Ctrl','RETURN'),
                     ],
-                'help' : '',
+                'help' : 'Open current item in web browser',
                 },
             'OPENLINKS' : {
                 'action' : self.OpenMultiInWebBrowser,
@@ -142,7 +142,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'accels' : [
                     ('Ctrl','Alt','Shift','O'),
                     ],
-                'help' : '',
+                'help' : 'Open all selected items in web browser',
                 },
             'PREVIOUS' : {
                 'action' : self._listbox_title.Prev,
@@ -150,7 +150,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'accels' : [
                     ('Ctrl','Shift','K'),
                     ],
-                'help' : '',
+                'help' : 'Previous item',
                 },
             'NEXT' : {
                 'action' : self._listbox_title.Next,
@@ -158,7 +158,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'accels' : [
                     ('Ctrl','Shift','J'),
                     ],
-                'help' : '',
+                'help' : 'Next item',
                 },
             'PREVIOUSPAGE' : {
                 'action' : self.OnPreviousPage,
@@ -166,7 +166,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'accels' : [
                     ('Ctrl','Shift','L'),
                     ],
-                'help' : '',
+                'help' : 'Previous page',
                 },
             'NEXTPAGE' : {
                 'action' : self.OnNextPage,
@@ -174,7 +174,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'accels' : [
                     ('Ctrl','Shift','H'),
                     ],
-                'help' : '',
+                'help' : 'Next page',
                 },
             'MARKASREAD' : {
                 'action' : self.MarkAsRead,
@@ -182,7 +182,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'accels' : [
                     ('Ctrl','Shift','M'),
                     ],
-                'help' : '',
+                'help' : 'Mark selected items as read',
                 },
             'MARKASUNREAD' : {
                 'action' : self.MarkAsUnread,
@@ -190,35 +190,35 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'accels' : [
                     ('Ctrl','Shift','U'),
                     ],
-                'help' : '',
+                'help' : 'Mark selected items as unread',
                 },
             'ADDSTAR' : {
                 'action' : self.AddStar,
                 'bitmap' : 'addstar',
                 'accels' : [
                     ],
-                'help' : '',
+                'help' : 'Add star to selected items',
                 },
             'DELSTAR' : {
                 'action' : self.DelStar,
                 'bitmap' : '',
                 'accels' : [
                     ],
-                'help' : '',
+                'help' : 'Del star to selected items',
                 },
             'ADDPUBLIC'      : {
                 'action' : self.AddPublic,
                 'bitmap' : 'addpublic',
                 'accels' : [
                     ],
-                'help' : 'Add public status',
+                'help' : 'Add public status to selected items',
                 },
             'DELPUBLIC' : {
                 'action' : self.DelPublic,
                 'bitmap' : '',
                 'accels' : [
                     ],
-                'help' : 'Del public status',
+                'help' : 'Del public status to selected items',
                 },
             'ADDFILTER' : {
                 'action' : self.FocusFilter,
