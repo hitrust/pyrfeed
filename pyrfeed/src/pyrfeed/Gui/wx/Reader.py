@@ -99,7 +99,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'accels' : [
                     ('Ctrl','Shift','R'),
                     ('Ctrl','R'),
-                    ('F5'),
+                    ('F5',),
                     ],
                 'help' : 'Reload entry list',
                 },
@@ -123,7 +123,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 'bitmap' : 'selectnext',
                 'accels' : [
                     ('Ctrl','Shift','I'),
-                    ('INSERT'),
+                    ('INSERT',),
                     ],
                 'help' : 'Select current item and go to next one',
                 },
@@ -374,8 +374,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 if len(event['accels']) >= 1 :
                     accel_main = event['accels'][0]
                     for accel in event['accels'][1:] :
-                        pass
-                        # accels.append(accel)
+                        accels.append(self.ConvertStringsToAccels(accel))
                     menu_path+='\t'+'+'.join(accel_main)
 
                 menu_content.append((menu_path,event['action'],event['help'],accels,event['id'],wx.Bitmap(os.path.join('..','res','toolbar',event['bitmap']+'.png'))))
@@ -667,6 +666,90 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         adi.SetWebSite('http://code.google.com/p/pyrfeed')
         adi.SetIcon(wx.Icon(os.path.join('..','res','pyrfeed-64x64.png'),wx.BITMAP_TYPE_ANY))
         wx.AboutBox(adi)
+
+    _strings_to_accels = {
+        'ADD':wx.WXK_ADD, 'ALT':wx.WXK_ALT, 'BACK':wx.WXK_BACK,
+        'CANCEL':wx.WXK_CANCEL, 'CAPITAL':wx.WXK_CAPITAL, 'CLEAR':wx.WXK_CLEAR,
+        'COMMAND':wx.WXK_COMMAND, 'CONTROL':wx.WXK_CONTROL,
+        'DECIMAL':wx.WXK_DECIMAL, 'DELETE':wx.WXK_DELETE,
+        'DIVIDE':wx.WXK_DIVIDE, 'DOWN':wx.WXK_DOWN, 'END':wx.WXK_END,
+        'ESCAPE':wx.WXK_ESCAPE, 'EXECUTE':wx.WXK_EXECUTE, 'F1':wx.WXK_F1,
+        'F10':wx.WXK_F10, 'F11':wx.WXK_F11, 'F12':wx.WXK_F12, 'F13':wx.WXK_F13,
+        'F14':wx.WXK_F14, 'F15':wx.WXK_F15, 'F16':wx.WXK_F16, 'F17':wx.WXK_F17,
+        'F18':wx.WXK_F18, 'F19':wx.WXK_F19, 'F2':wx.WXK_F2, 'F20':wx.WXK_F20,
+        'F21':wx.WXK_F21, 'F22':wx.WXK_F22, 'F23':wx.WXK_F23, 'F24':wx.WXK_F24,
+        'F3':wx.WXK_F3, 'F4':wx.WXK_F4, 'F5':wx.WXK_F5, 'F6':wx.WXK_F6,
+        'F7':wx.WXK_F7, 'F8':wx.WXK_F8, 'F9':wx.WXK_F9, 'HELP':wx.WXK_HELP,
+        'HOME':wx.WXK_HOME, 'INSERT':wx.WXK_INSERT, 'LBUTTON':wx.WXK_LBUTTON,
+        'LEFT':wx.WXK_LEFT, 'MBUTTON':wx.WXK_MBUTTON, 'MENU':wx.WXK_MENU,
+        'MULTIPLY':wx.WXK_MULTIPLY, 'NEXT':wx.WXK_NEXT,
+        'NUMLOCK':wx.WXK_NUMLOCK, 'NUMPAD0':wx.WXK_NUMPAD0,
+        'NUMPAD1':wx.WXK_NUMPAD1, 'NUMPAD2':wx.WXK_NUMPAD2,
+        'NUMPAD3':wx.WXK_NUMPAD3, 'NUMPAD4':wx.WXK_NUMPAD4,
+        'NUMPAD5':wx.WXK_NUMPAD5, 'NUMPAD6':wx.WXK_NUMPAD6,
+        'NUMPAD7':wx.WXK_NUMPAD7, 'NUMPAD8':wx.WXK_NUMPAD8,
+        'NUMPAD9':wx.WXK_NUMPAD9, 'NUMPAD_ADD':wx.WXK_NUMPAD_ADD,
+        'NUMPAD_BEGIN':wx.WXK_NUMPAD_BEGIN,
+        'NUMPAD_DECIMAL':wx.WXK_NUMPAD_DECIMAL,
+        'NUMPAD_DELETE':wx.WXK_NUMPAD_DELETE,
+        'NUMPAD_DIVIDE':wx.WXK_NUMPAD_DIVIDE, 'NUMPAD_DOWN':wx.WXK_NUMPAD_DOWN,
+        'NUMPAD_END':wx.WXK_NUMPAD_END, 'NUMPAD_ENTER':wx.WXK_NUMPAD_ENTER,
+        'NUMPAD_EQUAL':wx.WXK_NUMPAD_EQUAL, 'NUMPAD_F1':wx.WXK_NUMPAD_F1,
+        'NUMPAD_F2':wx.WXK_NUMPAD_F2, 'NUMPAD_F3':wx.WXK_NUMPAD_F3,
+        'NUMPAD_F4':wx.WXK_NUMPAD_F4, 'NUMPAD_HOME':wx.WXK_NUMPAD_HOME,
+        'NUMPAD_INSERT':wx.WXK_NUMPAD_INSERT, 'NUMPAD_LEFT':wx.WXK_NUMPAD_LEFT,
+        'NUMPAD_MULTIPLY':wx.WXK_NUMPAD_MULTIPLY, 'NUMPAD_NEXT':wx.WXK_NUMPAD_NEXT,
+        'NUMPAD_PAGEDOWN':wx.WXK_NUMPAD_PAGEDOWN, 'NUMPAD_PAGEUP':wx.WXK_NUMPAD_PAGEUP,
+        'NUMPAD_PRIOR':wx.WXK_NUMPAD_PRIOR, 'NUMPAD_RIGHT':wx.WXK_NUMPAD_RIGHT,
+        'NUMPAD_SEPARATOR':wx.WXK_NUMPAD_SEPARATOR, 'NUMPAD_SPACE':wx.WXK_NUMPAD_SPACE,
+        'NUMPAD_SUBTRACT':wx.WXK_NUMPAD_SUBTRACT, 'NUMPAD_TAB':wx.WXK_NUMPAD_TAB,
+        'NUMPAD_UP':wx.WXK_NUMPAD_UP, 'PAGEDOWN':wx.WXK_PAGEDOWN,
+        'PAGEUP':wx.WXK_PAGEUP, 'PAUSE':wx.WXK_PAUSE, 'PRINT':wx.WXK_PRINT,
+        'PRIOR':wx.WXK_PRIOR, 'RBUTTON':wx.WXK_RBUTTON, 'RETURN':wx.WXK_RETURN,
+        'RIGHT':wx.WXK_RIGHT, 'SCROLL':wx.WXK_SCROLL, 'SELECT':wx.WXK_SELECT,
+        'SEPARATOR':wx.WXK_SEPARATOR, 'SHIFT':wx.WXK_SHIFT,
+        'SNAPSHOT':wx.WXK_SNAPSHOT, 'SPACE':wx.WXK_SPACE, 'SPECIAL1':wx.WXK_SPECIAL1,
+        'SPECIAL10':wx.WXK_SPECIAL10, 'SPECIAL11':wx.WXK_SPECIAL11,
+        'SPECIAL12':wx.WXK_SPECIAL12, 'SPECIAL13':wx.WXK_SPECIAL13,
+        'SPECIAL14':wx.WXK_SPECIAL14, 'SPECIAL15':wx.WXK_SPECIAL15,
+        'SPECIAL16':wx.WXK_SPECIAL16, 'SPECIAL17':wx.WXK_SPECIAL17,
+        'SPECIAL18':wx.WXK_SPECIAL18, 'SPECIAL19':wx.WXK_SPECIAL19,
+        'SPECIAL2':wx.WXK_SPECIAL2, 'SPECIAL20':wx.WXK_SPECIAL20,
+        'SPECIAL3':wx.WXK_SPECIAL3, 'SPECIAL4':wx.WXK_SPECIAL4,
+        'SPECIAL5':wx.WXK_SPECIAL5, 'SPECIAL6':wx.WXK_SPECIAL6,
+        'SPECIAL7':wx.WXK_SPECIAL7, 'SPECIAL8':wx.WXK_SPECIAL8,
+        'SPECIAL9':wx.WXK_SPECIAL9, 'START':wx.WXK_START,
+        'SUBTRACT':wx.WXK_SUBTRACT, 'TAB':wx.WXK_TAB, 'UP':wx.WXK_UP,
+        'WINDOWS_LEFT':wx.WXK_WINDOWS_LEFT, 'WINDOWS_MENU':wx.WXK_WINDOWS_MENU,
+        'WINDOWS_RIGHT':wx.WXK_WINDOWS_RIGHT,
+        }
+    _strings_to_accelmods = {
+        'Ctrl' : wx.ACCEL_CTRL,
+        'Alt' : wx.ACCEL_ALT,
+        'Shift' : wx.ACCEL_SHIFT,
+        }
+
+    def ConvertStringsToAccels(self,strings) :
+        mods = strings[:-1]
+        key = strings[-1]
+        result = [0,None]
+        if len(key)>1 :
+            if key in self._strings_to_accels :
+                result[1] = self._strings_to_accels[key]
+            else :
+                raise Exception("Don't know key [%s]" % key)
+        else :
+            result[1] = ord(key)
+        if len(mods) >= 0 :
+            for mod in mods :
+                if mod in self._strings_to_accelmods :
+                    result[0] |= self._strings_to_accelmods[mod]
+                else :
+                    raise Exception("Don't know key mod [%s]" % mod)
+        else :
+            result[1] = wx.ACCEL_NORMAL
+
+        return tuple(result)
 
 def get_simple_app() :
     if hasattr(get_simple_app,'_simple_app') :
