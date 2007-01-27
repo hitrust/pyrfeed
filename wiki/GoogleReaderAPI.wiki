@@ -24,7 +24,7 @@ Google Reader API may require :
 
   * *SID* : Session ID. SID is generated each time you login to Google (any service). The SID is valid until you logout.
   * *user ID* : a 20 digits string used by google reader to identify a user. You don't really need to know it. You can always do things a way that user ID is not needed. Usually, when you need that information, just replace it by *-* and the user ID for current logged user will be used. The user ID never change for a user.
-  * *token* : A token is a special string that is used like a session identification, but that expire rather quickly. You usaully need a token for direct api calls that change informations. The token is valid for few minutes/hours. If API call fail (doesn't return OK), you just have to get antoher token.
+  * *token* : A token is a special 57 chars string that is used like a session identification, but that expire rather quickly. You usaully need a token for direct api calls that change informations. The token is valid for few minutes/hours. If API call fail (doesn't return OK), you just have to get antoher token.
   * *client ID* : A string that identify the client used. I suppose it's for logging/stat purpose, or perhaps to make some adjustement for some clients, but I doubt so. old GoogleReader interface use `'lens'`, new one use `'scroll'`. The writer of this document use `'contact:`_name_`-at-`_host_`'` for interactive test, and use string like `'pyrfeed/0.5.0'` for the software _pyrfeed_ in version _0.5.0_ (like classical identification strings for unix softwares).
   * *item*/*entry* : Sometimes called _item_, sometimes called _entry_, the item is the base element of a feed. An item usally contain a text, a title and a link, but can contain other properties. An RSS/Atom aggregator aggregates items. (Note: _item_ is the RSS term, while _entry_ is the Atom term).
 
@@ -87,6 +87,8 @@ Except for identification process, all Google Reader url ressources start with `
 
 ==Atom set of items==
 
+_this section is about urls starting by `http://www.google.com/reader/atom/`_
+
 The Google Reader database contains a huge number of items. Some of them are in your _reading list_ (understand, they are accessible in Google Reader for your account in "_All items_" section, and in your feeds/tags).
 
 The only way to get information related to an item is to "query an atom set of items" that contain this item.
@@ -134,14 +136,107 @@ Each atom set contains by default 20 items. You can change that, and other behav
 
 *Note* : _continuation_ has no meaning, it's just a string to help you find next items. You should not rely on its value to do anything else than that (even if this document will explain how that continuation is generated).
 
-Exemple :
+*Exemple* :
   All the 17 first items items from xkcd.com main feed that are not read can be found on the url : http://www.google.com/reader/atom/feed/http://xkcd.com/rss.xml?n=17&ck=1169900000&xt=user/-/state/com.google/read
 
-==Api==
+==API==
 
-_TODO: Text need to be written_
+_this section is about urls starting by `http://www.google.com/reader/api/0/`_
+
+There are two knids of API commands:
+  * edit commands
+  * list commands
+
+The number 0 is probably the API version number. Using that number, it will allow Google Reader to change API while stile maintaining an old API for quite some time.
+
+===Edit API===
+
+To edit anything in the Google Reader database, you need a token (see glossary).
+To get a token, just go to http://www.google.com/reader/api/0/token . This url will return a string containing 57 chars. It's the token.
+
+The token url takes optional GET arguments:
+
+|| *GET parameter name* || *python Google Reader API name* || *parameter value* ||
+|| `ck`  || _timestamp_ || current time stamp, probably used as a quick hack to be sure that cache won't be triggered. ||
+|| `client` || _client_ || The default client name (see _client_ in glossary) ||
+
+All edit commands use `POST` to retrieve information (note that GET won't work) but they also take a `GET` argument.
+
+|| *GET parameter name* || *python Google Reader API name* || *parameter value* ||
+|| `client` || _client_ || The default client name (see _client_ in glossary) ||
+
+All edit commands will return either an empty string if failled, either the string "`OK`". If failed, your token has perhaps expires. You can just try to get a new token. If it still doesn't return OK, it's a failure.
+
+Table of POST aguments for the `subscription/edit` edit call.
+
+|| *API call function* || *POST parameter name* || *python Google Reader API name* || *parameter value* ||
+||||||||  *`subscription/edit`* ||
+|| || `s` || _feed_ || The subscription feed name, in the form `feed/`_..._ ||
+|| || `t` || _title_ || The subscription title, used when adding a new subscription or when changing a subscription name ||
+|| || `a` || _add_ || A label to add (a label on a subscription is called a folder) in the form `user/`_..._ ||
+|| || `r` || _remove_ || A label to remove (a label on a subscription is called a folder) in the form `user/`_..._ ||
+|| || `ac` || _action_ || The actions to do. Know values are `edit` (to add/remove label/forlder to a feed), 'subscribe', 'unsubscribe' ||
+|| || `token` || _token_ || The mandatory up to date token ||
+||||||||  *`tag/edit`* ||
+|| || `s` || _feed_ || The tag/folder name seen as a feed ||
+|| || `pub` || _public_ || A boolean string `true` or `false`. When `true`, the tag/folder will become public. When `false`, the tag/folder will stop being public. ||
+|| || `token` || _token_ || The mandatory up to date token ||
+||||||||  *`edit-tag`* ||
+|| || `i` || _entry_ || The item/entry to edit, in the form `tag:google.com,2005:reader/item/`_..._ ( it's the xml id of the `entry` tag of the atom feed) ||
+|| || `a` || _add_ || A label/state to add (a label on an item/entry is called a tag) in the form `user/`_..._ ||
+|| || `r` || _remove_ || A label/state to remove (a label on an item/entry is called a tag) in the form `user/`_..._||
+|| || `ac` || _action_ || The actions to do. Know value is `edit` (to add/remove label/forlder to a feed) ||
+|| || `token` || _token_ || The mandatory up to date token ||
+||||||||  *`disable-tag`* ||
+|| || `s` || _feed_ || The tag/folder name seen as a feed ||
+|| || `ac` || _action_ || The actions to do. Know value is `disable-tags` (to remove a tag/folder) ||
+|| || `token` || _token_ || The mandatory up to date token ||
+
+Exemples :
+  To subscribe a new feed (for exemple http://xkcd.com/rss.xml), you can call:
+
+    http://www.google.com/reader/api/0/subscription/edit?client=contact:myname-at-gmail
+
+    with POST arguments : {{{s=http://xkcd.com/rss.xml&ac=subscribe&token=}}}_here-put-a-valid-token_
+
+  To add that feed in a folder (for exemple "comics"), you can call:
+
+    http://www.google.com/reader/api/0/subscription/edit?client=contact:myname-at-gmail
+
+    with POST arguments : {{{s=http://xkcd.com/rss.xml&ac=edit&a=user/-/label/comics&token=}}}_here-put-a-valid-token_
+
+Open questions that needs to be fixed :
+  * Are `tag/edit` and `edit-tag` just aliases ?
+  * Why does removing a tag/folder doesn't take an action while every other calls take actions ?
+  * Why is there several urls, it seems redundant with the action parameter ?
+
+===List API===
+
+To edit anything in the Google Reader database, you need a token (see glossary).
+To get a token, just go to http://www.google.com/reader/api/0/token . This url will return a string containing 57 chars. It's the token.
+
+|| *API call function* || *POST parameter name* || *python Google Reader API name* || *parameter value*/*API call description* ||
+|||||| *`tag/list`* || Get the tag list and shared status for each tag. ||
+|| || `output` || _output_ || The format of the returned output. may be 'json' or 'xml' ||
+|| || `ck`  || _timestamp_ || current time stamp, probably used as a quick hack to be sure that cache won't be triggered. ||
+|| || `client` || _client_ || The default client name (see _client_ in glossary) ||
+|||||| *`subscription/list`* || Get the subscription list and shared status for each tag. ||
+|| || `output` || _output_ || The format of the returned output. may be 'json' or 'xml' ||
+|| || `ck`  || _timestamp_ || current time stamp, probably used as a quick hack to be sure that cache won't be triggered. ||
+|| || `client` || _client_ || The default client name (see _client_ in glossary) ||
+|||||| *`preference/list`* || Get the preference list (configuration of the account for GoogleReader). ||
+|| || `output` || _output_ || The format of the returned output. may be 'json' or 'xml' ||
+|| || `ck`  || _timestamp_ || current time stamp, probably used as a quick hack to be sure that cache won't be triggered. ||
+|| || `client` || _client_ || The default client name (see _client_ in glossary) ||
+|||||| *`unread-count`* || Get all the information about where are located (in term of subscriptions and tags/folders) the unread items. ||
+|| || `all` || _all_       || 'true' if whole subscriptions/tags are required. (*TODO*: _Needs to check other values_)  ||
+|| || `output` || _output_ || The format of the returned output. may be 'json' or 'xml' ||
+|| || `ck`  || _timestamp_ || current time stamp, probably used as a quick hack to be sure that cache won't be triggered. ||
+|| || `client` || _client_ || The default client name (see _client_ in glossary) ||
 
 ==Viewer==
+
+_this section is about urls starting by `http://www.google.com/reader/view/`_
 
 All url starting by http://www.google.com/reader/view/ are html pages that use AJAX code to show atom feeds found from http://www.google.com/reader/atom/.
 
@@ -153,7 +248,8 @@ You can browse directly all items from xkcd main feed by going to http://www.goo
 
 ==Misc==
 
-_TODO: Text need to be written_
+_TODO: Text needs to be written_
+_TODO: mainly /share/_
 
 =References=
 
