@@ -62,11 +62,11 @@ If you don't have a http client API that support cookies, you can just add heade
 =The three layers for feed aggregators=
 
 When you're writting a feed aggregator, you need to write three different layers :
-  * Layer 1 : The layer that parse feeds. It's not the easiest job. "But, it's just xml, it should be easy". It's not. It's just xml. It's just 10 differents and incompatible xml formats (9 RSS formats according to Mark Pilgrim and 1 Atom format). You also perhaps need to understand all non standard feeds that mix some features from differents standards.
-  * Layer 2 : The database layer. Once you've parsed your feed, you need to store it in a database, and and interesting things like "items read", etc.
-  * Layer 3 : The user interface.
+  * *Layer 1* : The layer that parse feeds. It's not the easiest job. "But, it's just xml, it should be easy". It's not. It's just xml. It's just 10 differents and incompatible xml formats (9 RSS formats according to Mark Pilgrim and 1 Atom format). You also perhaps need to understand all non standard feeds that mix some features from differents standards.
+  * *Layer 2* : The database layer. Once you've parsed your feed, you need to store it in a database, and and interesting things like "items read", etc.
+  * *Layer 3* : The user interface.
 
-Google Reader offer infact acces to *layer 1* only, or *layer 1+2* or *layer 1+2+3*.
+Google Reader offer in fact acces to *layer 1* only, or *layer 1+2* or *layer 1+2+3*.
 
 You can have acces to *layer 1* only. Feeds are parsed by Google Reader, and Google Reader give you access to a new Atom feed that contains same data as the original feed, but always with the same output format : Atom.
 
@@ -78,7 +78,7 @@ Of course, you have access to *layer 1+2+3* because it's Google Reader's main pr
 
 Except for identification process, all Google Reader url ressources start with `http://www.google.com/reader/`. We'll explain here direct subspaces of thoses urls.
 
-|| *URL prefix* || *will be refered as, in  this document* || *comment* ||
+|| *URL prefix* || *Will be refered as, in  this document* || *Description* ||
 || `http://www.google.com/reader/atom/` || _/atom/_ || All urls starting by this prefix return atom feeds. It's the (only?) way to acces to feed contents. ||
 || `http://www.google.com/reader/api/0/` || _/api/0/_ || This is the main API entry point. It's used for items/feeds modifications, like adding a _Star_, deleting a tag, etc. For those modification services, it return either `"OK"` or `""`. It's also used to consult some setting lists like list of feeds, list of tags, list of unread counts by feeds/tags, etc. For those read services, it returns an _"object"_ that can be either _[http://json.org/ json]_ or _xml that look like json_. ||
 || `http://www.google.com/reader/view/` || _/view/_ || All AJAX interface is done by /view/ urls. AJAX code use _/atom/_ and _/api/0/_ as sublayers to do the job. ||
@@ -96,6 +96,46 @@ All items are or were included in feeds. One way to query items is to query the 
 Item are also associated to categories. tags/labels are categories, but also the "read" state is also a category.
 
 Antoher way to query items is to query all items that are associated to a category.
+
+|||||||| *Set of items suffix* || *Description* ||
+|| `feed/` |||||| _url of a feed_ || The url to query a specific feed. It's Google Reader way to access to *layer 1* only. *Note* : This service is not related to an account and can be access without registration. ||
+|| `user/` || _user ID_`/` || `label/` || _label name_ || This is the suffix to access to all items with a specific label ||
+|| `user/` || _user ID_`/` || `state/com.google/` || _state_ || This is the suffix to access to all items with a specific state like *`read`*, *`starred`*, etc. ||
+
+You can use `-` as your *user ID*, it will use the *user ID* for your currently identified account.
+
+|| *State name* || *State meaning* ||
+|| `read` || A read item will have the state _read_ ||
+|| `kept-unread` || Once you've clicked on "keep unread", an item will have the state _kept-unread_ ||
+|| `fresh` || When a new item of one of your feeds arrive, it's labeled as _fresh_. When (_need to find what remove fresh label_), the fresh label disappear. ||
+|| `starred` || When your mark an item with a star, you set it's _starred_ state ||
+|| `broadcast` || When your mark an item as being public, you set it's _broadcast_ state ||
+|| `reading-list` || All you items are flagged with the _reading-list_ state. To see all your items, just ask for items in the state `reading-list` ||
+|| `tracking-body-link-used` || Set if you ever clicked on a link in the description of the item. ||
+|| `tracking-emailed` || Set if you ever emailed the item to someone. ||
+|| `tracking-item-link-used` || Set if you ever clicked on a link in the description of the item. ||
+|| `tracking-kept-unread` || Set if you ever mark your read item as unread. ||
+
+If you need to query a set of items in an atom format, just query `http://www.google.com/reader/atom/` followed by the set of items suffix.
+
+For exemple, if you want to acces to Google Reader's rewritting of the feed http://www.xkcd.com/rss.xml , you can query http://www.google.com/reader/atom/feed/http://www.xkcd.com/rss.xml . This can be done whether you are identified or not.
+If you want to query all your last read items, you can query http://www.google.com/reader/atom/user/-/state/com.google/read .
+
+Each atom set contains by default 20 items. You can change that, and other behaviour by adding parameters to the query.
+
+|| *GET parameter name* || *python Google Reader API name* || *parameter value* ||
+|| `n` || _count_ || Number of items returns in a set of items (default 20) ||
+|| `client` || _client_ || The default client name (see _client_ in glossary) ||
+|| `r`  || _order_ || By default, items starts now, and go back time. You can change that by specifying this key to the value `o` (default value is `d`) ||
+|| `ot` || _start_time_ || The time (unix time, number of seconds from January 1st, 1970 00:00 UTC) from which to start to get items. Only works for order r=o mode. If the time is older than one month ago, one month ago will be used instead. ||
+|| `ck`  || _timestamp_ || current time stamp, probably used as a quick hack to be sure that cache won't be triggered. ||
+|| `xt`  || _exclude_target_ || another set of items suffix, to be excluded from the query. For exemple, you can query all items from a feed that are not flagged as read. This value start with `feed/` or  'user/`, not with `http://` or `www` ||
+|| `c`  || _continuation_ || a string used for _continuation_ process. Each feed return not all items, but only a certain number of items. You'll find in the atom feed (under the name `gr:continuation`) a string called continuation. Just add that string as argument for this parameter, and you'll retrieve next items. ||
+
+*Note* : _continuation_ has no meaning, it's just a string to help you find next items. You should not rely on its value to do anything else than that (even if this document will explain how that continuation is generated).
+
+Exemple :
+  All the 17 first items items from xkcd.com main feed that are not read can be found on the url : http://www.google.com/reader/atom/feed/http://www.xkcd.com/rss.xml?n=17&ck=1169900000&xt=user/-/state/com.google/read
 
 ==Api==
 
