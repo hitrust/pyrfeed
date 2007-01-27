@@ -1,3 +1,4 @@
+#labels Document-API
 *Note* : This document is totally unofficial. You should *not* rely on anything on this document is you *need* an exact information.
 Google Reader API has not officially been released. This document has been made mainly by reverse engeneering the protocol.
 
@@ -33,7 +34,7 @@ Google Reader API may require :
 
 To login, you need to post with https on https://www.google.com/accounts/ClientLogin with the following POST parameters :
 
-|| *POST parameter name* || *Post parameter value* ||
+|| *POST parameter name* || *POST parameter value* ||
 || service || `'reader'` ||
 || Email || _your login_ ||
 || Passwd || _your password_ ||
@@ -58,6 +59,21 @@ You then have to add yourself a cookie (well, it look like Google doesn't add it
 
 If you don't have a http client API that support cookies, you can just add header lines that simulate this cookie in all other requests. This should be the only thing for which cookies are really needed.
 
+=The three layers for feed aggregators=
+
+When you're writting a feed aggregator, you need to write three different layers :
+  * Layer 1 : The layer that parse feeds. It's not the easiest job. "But, it's just xml, it should be easy". It's not. It's just xml. It's just 10 differents and incompatible xml formats (9 RSS formats according to Mark Pilgrim and 1 Atom format). You also perhaps need to understand all non standard feeds that mix some features from differents standards.
+  * Layer 2 : The database layer. Once you've parsed your feed, you need to store it in a database, and and interesting things like "items read", etc.
+  * Layer 3 : The user interface.
+
+Google Reader offer infact acces to *layer 1* only, or *layer 1+2* or *layer 1+2+3*.
+
+You can have acces to *layer 1* only. Feeds are parsed by Google Reader, and Google Reader give you access to a new Atom feed that contains same data as the original feed, but always with the same output format : Atom.
+
+You can have acces to *layer 1+2*. This documents purpose is about how to acces to *layer 1+2* from Google Reader in order to create your own *layer 3*.
+
+Of course, you have access to *layer 1+2+3* because it's Google Reader's main product.
+
 =Url scheme=
 
 Except for identification process, all Google Reader url ressources start with `http://www.google.com/reader/`. We'll explain here direct subspaces of thoses urls.
@@ -71,7 +87,15 @@ Except for identification process, all Google Reader url ressources start with `
 
 ==Feeds==
 
-_TODO: Text need to be written_
+The Google Reader database contains a huge number of items. Some of them are in your _reading list_ (understand, they are accessible in Google Reader for your account in "_All items_" section, and in your feeds/tags).
+
+The only way to get information related to an item is to "query an atom set of items" that contain this item.
+
+All items are or were included in feeds. One way to query items is to query the original feed.
+
+Item are also associated to categories. tags/labels are categories, but also the "read" state is also a category.
+
+Antoher way to query items is to query all items that are associated to a category.
 
 ==Api==
 
@@ -84,3 +108,8 @@ _TODO: Text need to be written_
 ==Misc==
 
 _TODO: Text need to be written_
+
+=References=
+
+  * http://www.niallkennedy.com/blog/archives/2005/12/google_reader_a.html : First document being consided as an unofficial Google Reader API.
+  * http://www.xml.com/pub/a/2002/12/18/dive-into-xml.html : Mark Pilgrim explaining the mess with all RSS formats
