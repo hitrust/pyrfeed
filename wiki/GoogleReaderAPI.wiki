@@ -255,3 +255,5 @@ _TODO: mainly /share/_
 
   * http://www.niallkennedy.com/blog/archives/2005/12/google_reader_a.html : First document being consided as an unofficial Google Reader API.
   * http://www.xml.com/pub/a/2002/12/18/dive-into-xml.html : Mark Pilgrim explaining the mess with all RSS formats
+
+[http://pyrfeed.yi.org/image.png]
