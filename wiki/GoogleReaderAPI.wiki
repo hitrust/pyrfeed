@@ -33,6 +33,7 @@ Google Reader API may require :
 
 To login, you need to post with https on https://www.google.com/accounts/ClientLogin with the following POST parameters :
 
+|| *POST parameter name* || *Post parameter value* ||
 || service || `'reader'` ||
 || Email || _your login_ ||
 || Passwd || _your password_ ||
@@ -53,7 +54,7 @@ You then have to add yourself a cookie (well, it look like Google doesn't add it
 || name || `SID` ||
 || domain || `.google.com` ||
 || path || `/` ||
-|| expires || 1600000000 ||
+|| expires || `1600000000` ||
 
 If you don't have a http client API that support cookies, you can just add header lines that simulate this cookie in all other requests. This should be the only thing for which cookies are really needed.
 
@@ -61,12 +62,12 @@ If you don't have a http client API that support cookies, you can just add heade
 
 Except for identification process, all Google Reader url ressources start with `http://www.google.com/reader/`. We'll explain here direct subspaces of thoses urls.
 
-|| URL prefix || will be refered as, in  this document || comment ||
-|| `http://www.google.com/reader/atom/` || /atom/ || All urls starting by this prefix return atom feeds. It's the (only?) way to acces to feed contents. ||
-|| `http://www.google.com/reader/api/0/` || /api/0/ || This is the main API entry point. It's used for items/feeds modifications, like adding a _Star_, deleting a tag, etc. For those modification services, it return either `"OK"` or `""`. It's also used to consult some setting lists like list of feeds, list of tags, list of unread counts by feeds/tags, etc. For those read services, it returns an _"object"_ that can be either _json_ or _xml that look like json_. ||
-|| `http://www.google.com/reader/view/` || /view/ || All AJAX interface is done by /view/ urls. AJAX code use /atom/ and /api/0/ as sublayers to do the job. ||
-|| `http://www.google.com/reader/shared/` || /shared/ || All shared pages use this prefix. You obviously don't need authentification to use those pages. ||
-|| `http://www.google.com/reader/settings/` || /settings/ || The AJAX application to configure all settings. Mainly manipulate informations from /api/0/. ||
+|| *URL prefix* || *will be refered as, in  this document* || *comment* ||
+|| `http://www.google.com/reader/atom/` || _/atom/_ || All urls starting by this prefix return atom feeds. It's the (only?) way to acces to feed contents. ||
+|| `http://www.google.com/reader/api/0/` || _/api/0/_ || This is the main API entry point. It's used for items/feeds modifications, like adding a _Star_, deleting a tag, etc. For those modification services, it return either `"OK"` or `""`. It's also used to consult some setting lists like list of feeds, list of tags, list of unread counts by feeds/tags, etc. For those read services, it returns an _"object"_ that can be either _[http://json.org/ json]_ or _xml that look like json_. ||
+|| `http://www.google.com/reader/view/` || _/view/_ || All AJAX interface is done by /view/ urls. AJAX code use _/atom/_ and _/api/0/_ as sublayers to do the job. ||
+|| `http://www.google.com/reader/shared/` || _/shared/_ || All shared pages use this prefix. You obviously don't need authentification to use those pages. ||
+|| `http://www.google.com/reader/settings/` || _/settings/_ || The AJAX application to configure all settings. Mainly manipulate informations from _/api/0/_. ||
 
 ==Feeds==
 
