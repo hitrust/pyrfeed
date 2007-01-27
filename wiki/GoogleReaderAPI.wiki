@@ -79,13 +79,13 @@ Of course, you have access to *layer 1+2+3* because it's Google Reader's main pr
 Except for identification process, all Google Reader url ressources start with `http://www.google.com/reader/`. We'll explain here direct subspaces of thoses urls.
 
 || *URL prefix* || *Will be refered as, in  this document* || *Description* ||
-|| `http://www.google.com/reader/atom/` || _/atom/_ || All urls starting by this prefix return atom feeds. It's the (only?) way to acces to feed contents. ||
-|| `http://www.google.com/reader/api/0/` || _/api/0/_ || This is the main API entry point. It's used for items/feeds modifications, like adding a _Star_, deleting a tag, etc. For those modification services, it return either `"OK"` or `""`. It's also used to consult some setting lists like list of feeds, list of tags, list of unread counts by feeds/tags, etc. For those read services, it returns an _"object"_ that can be either _[http://json.org/ json]_ or _xml that look like json_. ||
-|| `http://www.google.com/reader/view/` || _/view/_ || All AJAX interface is done by /view/ urls. AJAX code use _/atom/_ and _/api/0/_ as sublayers to do the job. ||
+|| `http://www.google.com/reader/atom/` || _/atom/_ || All urls starting by this prefix return atom feeds. It's the (only?) way to acces to feed contents. This is the way to access *layer 1* and *layer 1+2*. ||
+|| `http://www.google.com/reader/api/0/` || _/api/0/_ || This is the main API entry point. It's used for items/feeds modifications, like adding a _Star_, deleting a tag, etc. For those modification services, it return either `"OK"` or `""`. It's also used to consult some setting lists like list of feeds, list of tags, list of unread counts by feeds/tags, etc. For those read services, it returns an _"object"_ that can be either _[http://json.org/ json]_ or _xml that look like json_. This is a *layer 2* only zone. ||
+|| `http://www.google.com/reader/view/` || _/view/_ || All AJAX interface is done by /view/ urls. AJAX code use _/atom/_ and _/api/0/_ as sublayers to do the job. This is the way to access *layer 3*. ||
 || `http://www.google.com/reader/shared/` || _/shared/_ || All shared pages use this prefix. You obviously don't need authentification to use those pages. ||
-|| `http://www.google.com/reader/settings/` || _/settings/_ || The AJAX application to configure all settings. Mainly manipulate informations from _/api/0/_. ||
+|| `http://www.google.com/reader/settings/` || _/settings/_ || The AJAX application to configure all settings. Mainly manipulate informations from _/api/0/_. This part of *layer 3*. ||
 
-==Feeds==
+==Atom set of items==
 
 The Google Reader database contains a huge number of items. Some of them are in your _reading list_ (understand, they are accessible in Google Reader for your account in "_All items_" section, and in your feeds/tags).
 
@@ -118,7 +118,7 @@ You can use `-` as your *user ID*, it will use the *user ID* for your currently 
 
 If you need to query a set of items in an atom format, just query `http://www.google.com/reader/atom/` followed by the set of items suffix.
 
-For exemple, if you want to acces to Google Reader's rewritting of the feed http://www.xkcd.com/rss.xml , you can query http://www.google.com/reader/atom/feed/http://www.xkcd.com/rss.xml . This can be done whether you are identified or not.
+For exemple, if you want to acces to Google Reader's rewritting of the feed http://xkcd.com/rss.xml , you can query http://www.google.com/reader/atom/feed/http://xkcd.com/rss.xml . This can be done whether you are identified or not.
 If you want to query all your last read items, you can query http://www.google.com/reader/atom/user/-/state/com.google/read .
 
 Each atom set contains by default 20 items. You can change that, and other behaviour by adding parameters to the query.
@@ -129,13 +129,13 @@ Each atom set contains by default 20 items. You can change that, and other behav
 || `r`  || _order_ || By default, items starts now, and go back time. You can change that by specifying this key to the value `o` (default value is `d`) ||
 || `ot` || _start_time_ || The time (unix time, number of seconds from January 1st, 1970 00:00 UTC) from which to start to get items. Only works for order r=o mode. If the time is older than one month ago, one month ago will be used instead. ||
 || `ck`  || _timestamp_ || current time stamp, probably used as a quick hack to be sure that cache won't be triggered. ||
-|| `xt`  || _exclude_target_ || another set of items suffix, to be excluded from the query. For exemple, you can query all items from a feed that are not flagged as read. This value start with `feed/` or  'user/`, not with `http://` or `www` ||
+|| `xt`  || _exclude_target_ || another set of items suffix, to be excluded from the query. For exemple, you can query all items from a feed that are not flagged as read. This value start with `feed/` or  `user/`, not with `!http://` or `www` ||
 || `c`  || _continuation_ || a string used for _continuation_ process. Each feed return not all items, but only a certain number of items. You'll find in the atom feed (under the name `gr:continuation`) a string called continuation. Just add that string as argument for this parameter, and you'll retrieve next items. ||
 
 *Note* : _continuation_ has no meaning, it's just a string to help you find next items. You should not rely on its value to do anything else than that (even if this document will explain how that continuation is generated).
 
 Exemple :
-  All the 17 first items items from xkcd.com main feed that are not read can be found on the url : http://www.google.com/reader/atom/feed/http://www.xkcd.com/rss.xml?n=17&ck=1169900000&xt=user/-/state/com.google/read
+  All the 17 first items items from xkcd.com main feed that are not read can be found on the url : http://www.google.com/reader/atom/feed/http://xkcd.com/rss.xml?n=17&ck=1169900000&xt=user/-/state/com.google/read
 
 ==Api==
 
@@ -143,7 +143,13 @@ _TODO: Text need to be written_
 
 ==Viewer==
 
-_TODO: Text need to be written_
+All url starting by http://www.google.com/reader/view/ are html pages that use AJAX code to show atom feeds found from http://www.google.com/reader/atom/.
+
+You can append to the base url any _set of items suffix_ to view only that set of items. Note however that GET parameters are not valid (in fact are ignored) for those urls.
+
+You can browse directly all your items labeled "important" by going to http://www.google.com/reader/view/user/-/label/important
+
+You can browse directly all items from xkcd main feed by going to http://www.google.com/reader/view/feed/http://xkcd.com/rss.xml even if you didn't subscribed to it (in which case there will be a button "Subscribe" on the top of the screen). Note however that if you're not identified, you'll browse the feed using the old interface (lens) and not the new on (scroll).
 
 ==Misc==
 
