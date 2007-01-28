@@ -212,10 +212,9 @@ Open questions that needs to be fixed :
 
 ===List API===
 
-To edit anything in the Google Reader database, you need a token (see glossary).
-To get a token, just go to http://www.google.com/reader/api/0/token . This url will return a string containing 57 chars. It's the token.
+All those calls can be used with GET requests.
 
-|| *API call function* || *POST parameter name* || *python Google Reader API name* || *parameter value*/*API call description* ||
+|| *API call function* || *GET parameter name* || *python Google Reader API name* || *parameter value*/*API call description* ||
 |||||| *`tag/list`* || Get the tag list and shared status for each tag. ||
 || || `output` || _output_ || The format of the returned output. may be 'json' or 'xml' ||
 || || `ck`  || _timestamp_ || current time stamp, probably used as a quick hack to be sure that cache won't be triggered. ||
