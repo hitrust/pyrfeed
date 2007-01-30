@@ -53,7 +53,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         self.SetNextGuiMenu()
 
     def _create_tool_bar( self ) :
-        self._tool_bar = self.CreateToolBar(style=wx.TB_HORIZONTAL)
+        self._tool_bar = self.CreateToolBar(style=wx.TB_HORIZONTAL|wx.TB_FLAT)
 
     def _create_combo_filter( self, parent ) :
         self._combo_filter = FilterControl(parent)
