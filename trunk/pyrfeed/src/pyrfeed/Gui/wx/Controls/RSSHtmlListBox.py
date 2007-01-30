@@ -24,6 +24,8 @@ class RSSHtmlListBox(wx.HtmlListBox) :
         if self._config['wx/htmllistbox/useimage'] :
             self._checked_pattern = "<img src='../res/checked.png'>&nbsp;" + self._checked_pattern
             self._unchecked_pattern = "<img src='../res/unchecked.png'>&nbsp;" + self._unchecked_pattern
+            
+        self.Bind(wx.EVT_LISTBOX_DCLICK,self.OnDClick)
 
     def Create(self, *args, **kwargs) :
         self.SetChoices()
@@ -97,6 +99,10 @@ class RSSHtmlListBox(wx.HtmlListBox) :
         if len(self._selected_items) == 0 :
             self.SelectItem()
         return list(self._selected_items)
+        
+    def OnDClick(self,event=None) :
+        self.SelectItem()
+
 
 register_key( 'wx/htmllistbox/useimage', bool, doc='Use image for check/uncheck', default=False )
 register_key( 'wx/htmllistbox/usebold', bool, doc='Use bold for check', default=True )
