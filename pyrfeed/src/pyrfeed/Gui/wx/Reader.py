@@ -434,7 +434,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
 
             for index in xrange(self._pagestart,self._pagestart+self._pagesize) :
                 if 0<=index<len(self._titles) :
-                    self._listbox_title.Append("%d - %s" % (index,self._titles[index]))
+                    self._listbox_title.Append("%d - %s" % (index+1,self._titles[index]))
             if is_reload :
                 filters = self._rss_reader.get_filters()
                 self._combo_filter.ChangeDefaultFilter( filters )

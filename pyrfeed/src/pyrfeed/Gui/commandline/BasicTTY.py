@@ -48,7 +48,7 @@ class BasicTTY(object):
             if positions == None :
                 positions = xrange(len(self._titles))
             for position in list(positions)[:pagesize] :
-                self._print(" %3d. - %s\n" % (position,self._titles[position][:screensize-5]))
+                self._print(" %3d. - %s\n" % (position+1,self._titles[position][:screensize-5]))
             self._filters = self._rss_reader.get_filters()
             self._filters_diff = self._rss_reader.get_filters_diff()
             self._print("\n")
@@ -64,17 +64,17 @@ class BasicTTY(object):
                     interval[0] = 0
                 else :
                     # TODO : Check interval[0] is an int
-                    interval[0] = int(interval[0])
+                    interval[0] = int(interval[0])-1
 
                 if interval[1] == '' :
                     interval[1] = len(self._titles)-1
                 else :
                     # TODO : Check interval[1] is an int
-                    interval[1] = int(interval[1])
+                    interval[1] = int(interval[1])-1
                 int_list += range(interval[0],interval[1]+1)
             else :
                 # TODO : Check arg is an int
-                int_list.append(int(arg))
+                int_list.append(int(arg)-1)
         return int_list
 
     def main_loop(self) :
@@ -129,7 +129,7 @@ class BasicTTY(object):
                 elif action_list[0] in (VIEW,VIEWDETAILS) :
                     for position in self.get_int_list(action_list[1:]) :
                         self._print('\n')
-                        self._print('='*3+' [ '+('%3d'%position)+' ] '+'='*58+'\n')
+                        self._print('='*3+' [ '+('%3d'%(position+1,))+' ] '+'='*58+'\n')
                         self._print(self._titles[position]+'\n')
                         self._print('-'*65+'\n')
                         if action_list[0] == VIEWDETAILS :
