@@ -1,4 +1,4 @@
-from pyrfeed.Config.Config import Config
+from pyrfeed.Config.Config import ConfigClass
 
 class ConversionException(Exception) :
     pass
@@ -32,7 +32,7 @@ def register_type( keytype, from_type=None, from_str=None, from_type_exception=N
     if ihm_name is None :
         ihm_name = "%s" % keytype
 
-    Config.config_types[keytype] = {
+    ConfigClass.config_types[keytype] = {
         'from_type' : from_type,
         'from_str' : from_str,
         'ihm_name' : ihm_name,
@@ -40,7 +40,7 @@ def register_type( keytype, from_type=None, from_str=None, from_type_exception=N
         }
 
 def register_key( name, keytype, doc, default=None, internal=False ) :
-    if keytype not in Config.config_types :
+    if keytype not in ConfigClass.config_types :
         raise TypeError
 
     config_key = {
@@ -50,11 +50,11 @@ def register_key( name, keytype, doc, default=None, internal=False ) :
         'default' : default,
         'internal' : internal,
         }
-    if name in Config.config_keys :
-        if config_key != Config.config_keys[name] :
-            raise DuplicateDefinition('Configuration key %r already registered with %s. Trying to register with %s '%(name,Config.config_keys[name],config_key))
+    if name in ConfigClass.config_keys :
+        if config_key != ConfigClass.config_keys[name] :
+            raise DuplicateDefinition('Configuration key %r already registered with %s. Trying to register with %s '%(name,ConfigClass.config_keys[name],config_key))
 
-    Config.config_keys[name] = config_key
+    ConfigClass.config_keys[name] = config_key
 
 register_type( int, from_type_exception=ValueError, ihm_name='integer', default=0 )
 register_type( str, ihm_name='string', default='' )

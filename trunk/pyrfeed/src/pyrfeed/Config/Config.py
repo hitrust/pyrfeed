@@ -7,7 +7,7 @@ CONFIGURATION_NAME = ".pyrfeed.ini"
 class InvalidConfigurationKey(Exception) :
     pass
 
-class Config(object) :
+class ConfigClass(object) :
     config_types = {}
     config_keys = {}
 
