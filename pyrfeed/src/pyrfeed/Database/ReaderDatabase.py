@@ -8,13 +8,13 @@ except ImportError :
 from ReaderQuery import queries
 
 class ReaderDatabase ( object ) :
-    def __init__( self, dbname ) :
+    def __init__( self, dbname, debug=False ) :
         self._dbname = dbname
         self._base_exist = False
         if os.path.isfile(self._dbname) :
             self._base_exist = True
         self._queries = QueryExecutor(self._dbname,queries)
-        # self._queries._debug = True
+        self._queries._debug = debug
         if not(self._base_exist) :
             self.create()
 

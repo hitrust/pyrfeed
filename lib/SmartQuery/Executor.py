@@ -24,11 +24,13 @@ class QueryExecutor( object ) :
     def _execute_sql(self,sql,*args,**kwargs) :
         if self._debug :
             import time
-            handle = open('executor-calls','at')
-            handle.write('timestamp = %d\n' % time.time())
+            debug_filename = 'executor-calls'
+            handle = open(debug_filename,'at')
             handle.write('sql = %r\n' % sql)
             handle.write('args = %r\n' % (args,))
             handle.write('kwargs = %r\n' % (kwargs,))
+            start_time = time.time()
+            handle.write('timestamp (start) = %d\n' % start_time)
             handle.write('#----------------\n')
             handle.close()
 
@@ -43,6 +45,14 @@ class QueryExecutor( object ) :
             self._cursor.execute(sql,self._parse_in_dict(kwargs))
         elif self._sim_dict() :
             self._cursor.execute(sql % self._parse_in_dict(kwargs))
+        if self._debug :
+            stop_time = time.time()
+            handle = open(debug_filename,'at')
+            handle.write('timestamp (stop) = %d\n' % stop_time)
+            handle.write('duration = %d\n' % (stop_time-start_time))
+            handle.write('#================\n')
+            handle.close()
+
         return self._cursor.fetchall()
 
     def _use_seq(self) : return False

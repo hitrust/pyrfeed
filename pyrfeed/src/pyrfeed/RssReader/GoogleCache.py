@@ -11,7 +11,7 @@ class Reader(GoogleBase) :
         GoogleBase.__init__(self,config)
 
         database_name = self._config['database']
-        self._database = ReaderDatabase(database_name)
+        self._database = ReaderDatabase(database_name,debug=self._config['database-debug'])
 
     def synchro(self) :
         # First, we synchronize categories
@@ -198,4 +198,5 @@ class RssReaderInfoGoogleCache(RssReaderInfo) :
         return ""
 
 register_key( 'database', str, doc='The database name for GoogleCache mode', default='reader.sqlite3' )
+register_key( 'database-debug', bool, doc='Database will log every sql query if true. Developers only.', default='0' )
 
