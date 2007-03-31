@@ -49,6 +49,8 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         self._interface_name_by_menu_id = {}
 
         self._titles = []
+        self._busy = None
+        self._current_status = None
 
         self.SetNextGuiMenu()
 
@@ -71,6 +73,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         else :
             pos = -1
         self._window_html = HtmlClasses[pos]['class'](parent)
+        self._window_html.BindChangeStatus(self.SetTemporaryStatus)
 
     def _create_listbox_categories( self, parent ) :
         self._listbox_categories = wx.ListBox(parent, style=wx.LB_EXTENDED|wx.LB_SORT)
@@ -450,7 +453,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
 
     def OnTitleSelected (self, event=None) :
         if not(self._loading_page) :
-            busy = wx.BusyCursor()
+            self._busy = wx.BusyCursor()
             self._loading_page = True
             if self._rss_reader :
                 position = self._pagestart
@@ -463,10 +466,10 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                         self._listbox_categories.Append(categorie)
                 self._listbox_title.SetFocus()
             self._loading_page = False
-            busy = None
+            self._busy = None
 
     def Synchro (self, event=None) :
-        busy = wx.BusyCursor()
+        self._busy = wx.BusyCursor()
         self.SetCurrentStatus("Synchronizing...")
         if self._rss_reader :
             synchro_result = self._rss_reader.synchro()
@@ -475,26 +478,26 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
             else :
                 self.Populate(is_reload=True)
         self._listbox_title.SetFocus()
-        busy = None
+        self._busy = None
 
     def Reload (self, event=None) :
-        busy = wx.BusyCursor()
+        self._busy = wx.BusyCursor()
         self.SetCurrentStatus("Reloading...")
         if self._rss_reader :
             self._rss_reader.reload()
             self.Populate(is_reload=True)
         self._listbox_title.SetFocus()
-        busy = None
+        self._busy = None
 
     def _ProcessOnItems (self, action, status) :
-        busy = wx.BusyCursor()
+        self._busy = wx.BusyCursor()
         if self._rss_reader :
             items = self._listbox_title.GetSelectedItems()
             items = map(lambda item:item+self._pagestart,items)
             self.SetCurrentStatus(status % len(items))
             action(items)
             self.Reload()
-        busy = None
+        self._busy = None
 
     def MarkAsRead (self, event=None) :
         self._ProcessOnItems( self._rss_reader.mark_as_read, 'Marking %d items as read...' )
@@ -578,20 +581,20 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
     def SetNextGui(self,event) :
         menu_id = event.GetId()
         if menu_id in self._interface_name_by_menu_id :
-            busy = wx.BusyCursor()
+            self._busy = wx.BusyCursor()
             self._config['gui/next'] = self._interface_name_by_menu_id[menu_id]
             self.Close()
-            busy = None
+            self._busy = None
 
     def OpenInWebBrowser(self, event=None) :
-        busy = wx.BusyCursor()
+        self._busy = wx.BusyCursor()
         if self._rss_reader :
             position = self._pagestart
             position += self._listbox_title.GetSelection()
             link = self._rss_reader.get_link(position)
             if link and link != '' :
                 webbrowser.open(link)
-        busy = None
+        self._busy = None
 
     def OpenMultiInWebBrowser(self, event=None) :
         def openlink(positions) :
@@ -603,15 +606,15 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         self._ProcessOnItems( openlink, 'Opening links for %d items...' )
 
     def OnComboChange(self, event=None) :
-        busy = wx.BusyCursor()
+        self._busy = wx.BusyCursor()
         self.SetCurrentStatus("Filtering...")
         if self._rss_reader :
             self._rss_reader.set_filter(self._combo_filter.GetValue())
             self.Populate()
-        busy = None
+        self._busy = None
 
     def OnCategoriesSelected(self, event=None) :
-        busy = wx.BusyCursor()
+        self._busy = wx.BusyCursor()
         categories_selected = ""
         for categorie_position in self._listbox_categories.GetSelections() :
             categories_selected += self._listbox_categories.GetString(categorie_position) + ' '
@@ -623,10 +626,23 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
             self._clipboard.SetData(text_data_object)
             self._clipboard.Close()
 
-        busy = None
+        self._busy = None
 
     def SetCurrentStatus(self, text) :
+        self._current_status = text
         self._status_bar.SetStatusText(text,0)
+
+    def SetTemporaryStatus(self, text) :
+        if text is None :
+            self.UnsetTemporaryStatus()
+        else :
+            self._status_bar.SetStatusText(text,0)
+
+    def UnsetTemporaryStatus(self) :
+        text = self._current_status
+        if text is None :
+            text = ''
+        self.SetCurrentStatus(text)
 
     def SetSelectedCount(self, count) :
         self._status_bar.SetStatusText("%d selected item"%count+(count>1 and "s" or ""),1)
@@ -635,18 +651,18 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         self._combo_filter.SetFocus()
 
     def OnNextPage(self, event) :
-        busy = wx.BusyCursor()
+        self._busy = wx.BusyCursor()
         self.SetCurrentStatus("Changing page...")
         self._pagestart += self._pagesize
         self.Populate(same_titles=True)
-        busy = None
+        self._busy = None
 
     def OnPreviousPage(self, event) :
-        busy = wx.BusyCursor()
+        self._busy = wx.BusyCursor()
         self.SetCurrentStatus("Changing page...")
         self._pagestart -= self._pagesize
         self.Populate(same_titles=True)
-        busy = None
+        self._busy = None
 
     def OnHelpDoc(self, event=None) :
         webbrowser.open('http://code.google.com/p/pyrfeed/wiki/pyrfeed')
@@ -777,6 +793,6 @@ class GuiInfoWx(GuiInfo) :
 
 register_key( 'pagesize', int, doc='Size of a page of items', default=30 )
 register_key( 'wx/sashposition', int, doc='Position of the Sash seperation in pixels', default=200 )
-register_key( 'wx/htmlwindow', str, doc='HTML Window component to use', default='best' )
+register_key( 'wx/htmlwindow', str, doc='HTML Window component to use (simple/complex/best)', default='best' )
 
 # 'gui/next' will be handled elsewere for registration

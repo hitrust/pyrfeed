@@ -198,5 +198,5 @@ class RssReaderInfoGoogleCache(RssReaderInfo) :
         return ""
 
 register_key( 'database', str, doc='The database name for GoogleCache mode', default='reader.sqlite3' )
-register_key( 'database-debug', bool, doc='Database will log every sql query if true. Developers only.', default='0' )
+register_key( 'database-debug', bool, doc='Database will log every sql query if true. Developers only.', default=0 )
 
