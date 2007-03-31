@@ -1,4 +1,4 @@
-from pyrfeed.Config import Config
+from pyrfeed.Config import config
 from pyrfeed import __version__
 
 def usage() :
@@ -12,8 +12,8 @@ def usage() :
     usage_command_line_options()
 
 def usage_command_line_options() :
-    config_types = Config.config_types
-    config_keys = Config.config_keys
+    config_types = config.config_types
+    config_keys = config.config_keys
 
     keynames = config_keys.keys()
 

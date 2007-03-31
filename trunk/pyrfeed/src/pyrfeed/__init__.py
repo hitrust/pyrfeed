@@ -19,6 +19,13 @@ import pyrfeed.RssReader.GoogleCache
 import pyrfeed.RssReader.Fake
 # ------------------------------------------------------------
 
+# ------------------------------------------------------------
+from pyrfeed.help import usage
+from pyrfeed.Config import config
+from pyrfeed.Gui.InfoList import gui_info_list
+from pyrfeed.RssReader.InfoList import rssreader_info_list
+# ------------------------------------------------------------
+
 def pyrfeed_main() :
     # Due to profiling usage, those import should be done here and not
     # on the global space.
@@ -49,7 +56,7 @@ def main(argv=None) :
     if config['profile'] :
         cProfile.run(pyrfeed_main.func_code)
     else :
-        pyrfeed_main(config)
+        pyrfeed_main()
 
 register_key('help',bool,doc='Show help')
 register_key('save',bool,doc='Save the options in command line into configuration file')
