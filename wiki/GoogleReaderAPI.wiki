@@ -35,13 +35,15 @@ Google Reader API may require :
 To login, you need to post with https on https://www.google.com/accounts/ClientLogin with the following POST parameters :
 
 || *POST parameter name* || *POST parameter value* ||
-|| service || `'reader'` ||
+|| service || `'reader'` (!) ||
 || Email || _your login_ ||
 || Passwd || _your password_ ||
-|| source || _your client string identification_ ||
-|| continue || `'http://www.google.com/'` ||
+|| source || _your client string identification_ (!) ||
+|| continue || `'http://www.google.com/'` (!) ||
 
   Of course, _your login_ and _your password_ are login and password you usually use to identify interactively to Google.
+
+(!) : Those parameters are said to be optional ( http://code.google.com/p/pyrfeed/issues/detail?id=10 ). I didn't really tested. It's just how "browsers" identifies themselfs. Note that I consider _source_ and _service_ as a being  informative parameters for google, so I feel like I *need* to provide them, event if they are not required. Note that I have no idea about what Google or the Google Reader team really think about that. Perhaps they prefer "nothing but a crafted information", or perhaps they don't care. Who knows...
 
   There is no official rule _your client string identification_, see *client ID* in glossary for more informations.
 
@@ -256,3 +258,7 @@ _TODO: mainly /share/_
   * http://www.xml.com/pub/a/2002/12/18/dive-into-xml.html : Mark Pilgrim explaining the mess with all RSS formats
 
 [http://pyrfeed.yi.org/image.png]
+
+
+
+
