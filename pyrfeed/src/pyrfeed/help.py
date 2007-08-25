@@ -1,4 +1,4 @@
-from pyrfeed.Config import config
+from pyrfeed.config import config
 from pyrfeed import __version__
 
 def usage() :

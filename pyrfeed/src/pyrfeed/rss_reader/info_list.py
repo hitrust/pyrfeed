@@ -1,6 +1,6 @@
-from pyrfeed.RssReader.Info import RssReaderInfo
-from pyrfeed.Tools.InfoList import ElementInfoList
-from pyrfeed.Config import register_key
+from pyrfeed.rss_reader.info import RssReaderInfo
+from pyrfeed.tools.info_list import ElementInfoList
+from pyrfeed.config import register_key
 
 class _RssReaderInfoList(ElementInfoList) :
     BaseClass = RssReaderInfo

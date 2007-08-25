@@ -3,7 +3,7 @@
 import os
 import sys
 
-from pyrfeed.RssReader.Info import RssReaderInfo
+from pyrfeed.rss_reader.info import RssReaderInfo
 
 class Reader(object) :
     def __init__(self,config) :

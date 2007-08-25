@@ -1,2 +1,2 @@
-import pyrfeed.Gui.wx.Aui
-import pyrfeed.Gui.wx.Classic
+import pyrfeed.gui.wx.reader_frame_aui
+import pyrfeed.gui.wx.reader_frame_classic

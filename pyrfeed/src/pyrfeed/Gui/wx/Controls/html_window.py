@@ -2,8 +2,6 @@ import wx
 import wx.html
 import webbrowser
 
-from cStringIO import StringIO
-
 HTML_SIMPLE = 0
 HTML_COMPLEX = 1
 
@@ -41,6 +39,7 @@ HtmlClasses.append({'class':HtmlSimple,'name':'wx Classic'})
 
 if wx.Platform == '__WXMSW__':
     import wx.lib.iewin
+    from cStringIO import StringIO
 
     class HtmlComplex(wx.lib.iewin.IEHtmlWindow) :
 

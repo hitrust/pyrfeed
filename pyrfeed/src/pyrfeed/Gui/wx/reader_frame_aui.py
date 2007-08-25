@@ -1,6 +1,6 @@
 import wx.aui
-from pyrfeed.Gui.wx.Reader import RSSReaderFrame
-from pyrfeed.Gui.wx.Reader import GuiInfoWx
+from pyrfeed.gui.wx.reader_frame import RSSReaderFrame
+from pyrfeed.gui.wx.reader_frame import GuiInfoWx
 
 class RSSReaderFrameAui(RSSReaderFrame):
     def _create_components(self):

@@ -1,5 +1,5 @@
 import wx
-from pyrfeed.Config import register_key
+from pyrfeed.config import register_key
 
 class RSSHtmlListBox(wx.HtmlListBox) :
     def __init__(self, parent, frame, config, *args, **kwargs) :

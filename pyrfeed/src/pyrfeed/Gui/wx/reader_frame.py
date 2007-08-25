@@ -8,13 +8,13 @@ import wx
 import webbrowser
 from wxMenuProvider import MenuProvider
 
-from pyrfeed.Gui.wx.Controls.HtmlWindow import HtmlClasses, HTML_SIMPLE, HTML_COMPLEX
-from pyrfeed.Gui.wx.Controls.RSSHtmlListBox import RSSHtmlListBox
-from pyrfeed.Gui.wx.Controls.FilterControl import FilterControl
+from pyrfeed.gui.wx.controls.html_window import HtmlClasses, HTML_SIMPLE, HTML_COMPLEX
+from pyrfeed.gui.wx.controls.html_list_box import RSSHtmlListBox
+from pyrfeed.gui.wx.controls.filter_control import FilterControl
 
-from pyrfeed.Gui.Info import GuiInfo
-from pyrfeed.Gui.InfoList import gui_info_list
-from pyrfeed.Config import register_key
+from pyrfeed.gui.info import GuiInfo
+from pyrfeed.gui.info_list import gui_info_list
+from pyrfeed.config import register_key
 
 from pyrfeed import __version__ as pyrfeed_version
 

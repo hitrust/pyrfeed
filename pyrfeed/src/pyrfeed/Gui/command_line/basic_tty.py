@@ -3,9 +3,9 @@ import webbrowser
 
 from html2text import html2text_file
 
-from pyrfeed.Gui.Info import GuiInfo
-from pyrfeed.Gui.InfoList import gui_info_list
-from pyrfeed.Config import register_key
+from pyrfeed.gui.info import GuiInfo
+from pyrfeed.gui.info_list import gui_info_list
+from pyrfeed.config import register_key
 
 
 class ExceptionCommandDoesntExist(Exception) :

@@ -1,5 +1,5 @@
 import unittest
-from pyrfeed.Config import Config
+from pyrfeed.config import Config
 
 class TestConfig(unittest.TestCase) :
     def setUp(self) :

@@ -1,4 +1,4 @@
-from pyrfeed.Config.Config import ConfigClass
+from pyrfeed.config.config import ConfigClass
 
 class ConversionException(Exception) :
     pass

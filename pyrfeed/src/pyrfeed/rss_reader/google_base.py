@@ -2,7 +2,7 @@ from GoogleReader import CONST
 from GoogleReader import GoogleReader
 
 from pyrfeed import __version__ as pyrfeed_version
-from pyrfeed.Config import register_key
+from pyrfeed.config import register_key
 
 import time
 

@@ -1,10 +1,8 @@
 from GoogleReader import CONST
-from pyrfeed.Database.ReaderDatabase import ReaderDatabase
-from pyrfeed.RssReader.Info import RssReaderInfo
-
-# PEP238 # from .GoogleBase import GoogleBase
-from GoogleBase import GoogleBase
-from pyrfeed.Config import register_key
+from pyrfeed.database.reader_database import ReaderDatabase
+from pyrfeed.rss_reader.info import RssReaderInfo
+from pyrfeed.rss_reader.google_base import GoogleBase
+from pyrfeed.config import register_key
 
 class Reader(GoogleBase) :
     def __init__(self,config) :
