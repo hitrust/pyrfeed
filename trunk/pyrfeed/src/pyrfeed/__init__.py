@@ -1,7 +1,7 @@
 import sys
 import cProfile
-from pyrfeed.Config import config
-from pyrfeed.Config import register_key
+from pyrfeed.config import config
+from pyrfeed.config import register_key
 
 __version__ = '0.5.1'
 
@@ -11,19 +11,19 @@ __version__ = '0.5.1'
 # pyrfeed framework. A run-time import would also work
 # (and this would be real plugin)
 # ------------------------------------------------------------
-import pyrfeed.Gui.commandline
-import pyrfeed.Gui.wx
+import pyrfeed.gui.command_line
+import pyrfeed.gui.wx
 
-import pyrfeed.RssReader.Google
-import pyrfeed.RssReader.GoogleCache
-import pyrfeed.RssReader.Fake
+import pyrfeed.rss_reader.google
+import pyrfeed.rss_reader.google_cache
+import pyrfeed.rss_reader.fake
 # ------------------------------------------------------------
 
 # ------------------------------------------------------------
 from pyrfeed.help import usage
-from pyrfeed.Config import config
-from pyrfeed.Gui.InfoList import gui_info_list
-from pyrfeed.RssReader.InfoList import rssreader_info_list
+from pyrfeed.config import config
+from pyrfeed.gui.info_list import gui_info_list
+from pyrfeed.rss_reader.info_list import rssreader_info_list
 # ------------------------------------------------------------
 
 def pyrfeed_main() :
@@ -31,9 +31,9 @@ def pyrfeed_main() :
     # on the global space.
 
     from pyrfeed.help import usage
-    from pyrfeed.Config import config
-    from pyrfeed.Gui.InfoList import gui_info_list
-    from pyrfeed.RssReader.InfoList import rssreader_info_list
+    from pyrfeed.config import config
+    from pyrfeed.gui.info_list import gui_info_list
+    from pyrfeed.rss_reader.info_list import rssreader_info_list
 
     if config['help'] :
         usage()

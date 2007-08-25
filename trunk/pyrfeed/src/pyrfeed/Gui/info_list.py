@@ -1,6 +1,6 @@
-from pyrfeed.Gui.Info import GuiInfo
-from pyrfeed.Tools.InfoList import ElementInfoList
-from pyrfeed.Config import register_key
+from pyrfeed.gui.info import GuiInfo
+from pyrfeed.tools.info_list import ElementInfoList
+from pyrfeed.config import register_key
 
 class _GuiInfoList(ElementInfoList) :
     BaseClass = GuiInfo

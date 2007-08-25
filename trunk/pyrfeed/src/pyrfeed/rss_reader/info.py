@@ -1,7 +1,7 @@
 """ This package's goal is to provide a way to pyrfeed's rssreader to
 register themself to rest of the world with a consistent interface """
 
-from pyrfeed.Tools.Info import ElementInfo
+from pyrfeed.tools.info import ElementInfo
 
 class RssReaderInfo(ElementInfo) :
     name = 'RssReader'

@@ -5,7 +5,7 @@ try :
 except ImportError :
     from SmartQuery.SQLiteExecutor import QueryExecutor
 
-from ReaderQuery import queries
+from reader_query import queries
 
 class ReaderDatabase ( object ) :
     def __init__( self, dbname, debug=False ) :

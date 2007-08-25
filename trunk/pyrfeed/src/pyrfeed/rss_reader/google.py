@@ -1,8 +1,8 @@
 from GoogleReader import CONST
 
-from pyrfeed.RssReader.GoogleBase import GoogleBase
-from pyrfeed.RssReader.Info import RssReaderInfo
-from pyrfeed.Config import register_key
+from pyrfeed.rss_reader.google_base import GoogleBase
+from pyrfeed.rss_reader.info import RssReaderInfo
+from pyrfeed.config import register_key
 
 class Reader(GoogleBase) :
     def synchro(self) :

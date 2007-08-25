@@ -1,7 +1,7 @@
-from pyrfeed.Config.Config import ConfigClass
-from pyrfeed.Config.register import register_type
-from pyrfeed.Config.register import register_key
-from pyrfeed.Config.register import ConversionException
+from pyrfeed.config.config import ConfigClass
+from pyrfeed.config.register import register_type
+from pyrfeed.config.register import register_key
+from pyrfeed.config.register import ConversionException
 
 config = ConfigClass()
 
