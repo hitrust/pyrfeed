@@ -14,7 +14,7 @@ __version__ = '0.5.1'
 import pyrfeed.gui.command_line
 import pyrfeed.gui.wx
 
-import pyrfeed.rss_reader.google
+import pyrfeed.rss_reader.google_direct
 import pyrfeed.rss_reader.google_cache
 import pyrfeed.rss_reader.fake
 # ------------------------------------------------------------
