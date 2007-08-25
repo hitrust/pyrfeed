@@ -4,7 +4,7 @@ from pyrfeed.rss_reader.google_base import GoogleBase
 from pyrfeed.rss_reader.info import RssReaderInfo
 from pyrfeed.config import register_key
 
-class Reader(GoogleBase) :
+class GoogleDirect(GoogleBase) :
     def synchro(self) :
         self.reload()
 
@@ -125,8 +125,8 @@ class Reader(GoogleBase) :
         for position in positions :
             self._get_googlereader().del_label(self._filtered_items[position]['google_id'],labelname=label)
 
-class RssReaderInfoGoogle(RssReaderInfo) :
+class RssReaderInfoGoogleDirect(RssReaderInfo) :
     names = ['Google','direct']
     priority = 60
     def get_rss_reader(self) :
-        return Reader(self._config)
+        return GoogleDirect(self._config)

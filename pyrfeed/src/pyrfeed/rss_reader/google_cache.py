@@ -4,7 +4,7 @@ from pyrfeed.rss_reader.info import RssReaderInfo
 from pyrfeed.rss_reader.google_base import GoogleBase
 from pyrfeed.config import register_key
 
-class Reader(GoogleBase) :
+class GoogleCache(GoogleBase) :
     def __init__(self,config) :
         GoogleBase.__init__(self,config)
 
@@ -191,7 +191,7 @@ class RssReaderInfoGoogleCache(RssReaderInfo) :
     names = ['GoogleCache','db']
     priority = 70
     def get_rss_reader(self) :
-        return Reader(self._config)
+        return GoogleCache(self._config)
     def get_doc(self) :
         return ""
 
