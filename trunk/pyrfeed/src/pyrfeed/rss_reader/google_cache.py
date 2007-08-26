@@ -103,6 +103,8 @@ class GoogleCache(PageSelector,GoogleBase) :
             if filter_element.startswith('-') :
                 include = False
                 filter_element = filter_element[1:]
+            if filter_element.startswith('+') :
+                filter_element = filter_element[1:]
             if filter_element in filters_shortname :
                 if include :
                     include_categories.append(filter_element)
