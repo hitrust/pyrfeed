@@ -335,7 +335,20 @@ class BasicTTY(object):
                 else :
                     self._print('  %s is not configurable\n' % (arg,))
         else :
-            self._print('TODO: GET\n')
+            config_keys = self._config.config_keys
+            keynames = config_keys.keys()
+            keynames.sort()
+
+            configkeynames = self._config.keys()
+            for keyname in keynames :
+                if keyname in configkeynames :
+                    value = self._config[keyname]
+                    if keyname == 'passwd' :
+                        # Urk ! not nice !
+                        value = '*' * 16
+                    self._print('%-30s %-12s (default:%s)\n' % (keyname,value,config_keys[keyname]['default']))
+                else :
+                    self._print('%-30s              (default:%s)\n' % (keyname,config_keys[keyname]['default']))
 
     def do_DEL(self,command_name,*args) :
         del self._config[args[0]]
