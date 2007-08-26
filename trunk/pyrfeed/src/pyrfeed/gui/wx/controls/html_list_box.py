@@ -30,18 +30,29 @@ class RSSHtmlListBox(wx.HtmlListBox) :
     def Create(self, *args, **kwargs) :
         self.SetChoices()
 
-    def SetChoices(self, choices=None) :
+    def ClearChoices(self) :
+        self.SetChoices()
+
+    def SetChoices(self, choices=None, selected_choices=None) :
         self.Clear()
         self.Refresh()
+
         if choices == None :
-            choices = []
-        self._choices = choices
+            self._choices = []
+        else :
+            self._choices = list(choices)
+
         self._selected_items = set()
-        self._frame.SetSelectedCount(len(self._selected_items))
+        if selected_choices != None :
+            for index in xrange(len(self._choices)) :
+                if selected_choices[index] :
+                    self._selected_items.add(index)
+
         self.SetItemCount(len(self._choices))
 
-
-    def Append(self, string) :
+    def Append(self, string, selected=False) :
+        if selected :
+            self._selected_items.add(len(self._choices))
         self._choices.append(string)
         self.SetItemCount(len(self._choices))
 
@@ -62,38 +73,27 @@ class RSSHtmlListBox(wx.HtmlListBox) :
         return ""
 
     def SelectItem(self,event=None) :
-        pos = self.GetSelection()
-        if pos in self._selected_items :
-            self._selected_items.remove(pos)
+        item_selected = self._frame.SelectItem(self.GetSelection())
+        if item_selected :
+            self._selected_items.add(self.GetSelection())
         else :
-            self._selected_items.add(pos)
-        self._frame.SetSelectedCount(len(self._selected_items))
+            self._selected_items.remove(self.GetSelection())
         self.RefreshAll()
 
     def SelectItemNext(self,event=None) :
-        self.SelectItem(event)
+        item_selected = self._frame.SelectItem(self.GetSelection())
+        if item_selected :
+            self._selected_items.add(self.GetSelection())
+        else :
+            self._selected_items.remove(self.GetSelection())
         self.Next(event)
+        self.RefreshAll()
 
     def Prev(self,event=None) :
-        pos = self.GetSelection()
-        pos -= 1
-        if pos<0 :
-            pos=0
-        elif pos>=len(self._choices) :
-            pos = len(self._choices)-1
-        self.SetSelection(pos)
-        self._frame.OnTitleSelected(None)
-
+        self._frame.OnPrevItem()
 
     def Next(self,event=None) :
-        pos = self.GetSelection()
-        pos += 1
-        if pos<0 :
-            pos=0
-        elif pos>=len(self._choices) :
-            pos = len(self._choices)-1
-        self.SetSelection(pos)
-        self._frame.OnTitleSelected(None)
+        self._frame.OnNextItem()
 
     def GetSelectedItems(self) :
         if len(self._selected_items) == 0 :
@@ -104,6 +104,6 @@ class RSSHtmlListBox(wx.HtmlListBox) :
         self.SelectItem()
 
 
-register_key( 'wx/htmllistbox/useimage', bool, doc='Use image for check/uncheck', default=False )
+register_key( 'wx/htmllistbox/useimage', bool, doc='Use image for check/uncheck', default=True )
 register_key( 'wx/htmllistbox/usebold', bool, doc='Use bold for check', default=True )
 

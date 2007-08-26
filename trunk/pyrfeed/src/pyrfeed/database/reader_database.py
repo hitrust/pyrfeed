@@ -18,7 +18,7 @@ class ReaderDatabase ( object ) :
         if not(self._base_exist) :
             self.create()
 
-        self._items_categories = None
+        self._items_categories = []
 
     def create(self) :
         self.begin()

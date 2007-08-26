@@ -37,21 +37,15 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
 
         self._clipboard = wx.Clipboard()
 
-        self._pagestart = 0
-        self._pagesize = 30
-
-        self._pagesize = self._config['pagesize']
-
         self._labels_in_menus = []
         self._labels_by_add_id = {}
         self._labels_by_del_id = {}
 
         self._interface_name_by_menu_id = {}
 
-        self._titles = []
         self._busy = None
         self._current_status = None
-
+        
         self.SetNextGuiMenu()
 
     def _create_tool_bar( self ) :
@@ -422,112 +416,128 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         self._rss_reader = rss_reader
         self._combo_filter.SetValue(self._rss_reader.get_filter())
 
-    def Populate(self,is_reload=False,same_titles=False) :
-        self._listbox_title.SetChoices()
+    def Populate(self,is_reload=False) :
+        self._listbox_title.ClearChoices()
 
         if self._rss_reader :
-            if not(same_titles) :
-                self._titles = self._rss_reader.get_titles()
-            self._len_titles = len(self._titles)
+            for index,selected,title in self._rss_reader.get_page() :
+                self._listbox_title.Append("%d - %s" % (index+1,title),selected=selected)
 
-            if self._pagestart >= self._len_titles :
-                self._pagestart = (self._len_titles/self._pagesize)*self._pagesize
-            if self._pagestart < 0 :
-                self._pagestart = 0
-
-            for index in xrange(self._pagestart,self._pagestart+self._pagesize) :
-                if 0<=index<len(self._titles) :
-                    self._listbox_title.Append("%d - %s" % (index+1,self._titles[index]))
             if is_reload :
                 filters = self._rss_reader.get_filters()
                 self._combo_filter.ChangeDefaultFilter( filters )
                 self.ChangeLabels( filter(lambda x:x.startswith('label:'),filters) )
+
             self._combo_filter.ChangeDiffFilter( self._rss_reader.get_filters_diff() )
 
-            item_count = '%d items.' % self._len_titles
-            if self._pagesize<self._len_titles :
-                item_count += ' (page %d/%d)' % (self._pagestart/self._pagesize+1,(self._len_titles-1)/self._pagesize+1)
+            item_count = '%d items.' % self._rss_reader.get_item_count()
+            if self._rss_reader.get_page_count() > 1 :
+                item_count += ' (page %d/%d)' % (self._rss_reader.get_page_number()+1,self._rss_reader.get_page_count())
+
+            self._listbox_title.SetSelection(self._rss_reader.get_local_cursor_position())
 
             self.SetCurrentStatus(item_count)
+            self.UpdateSelectedItemStatus()
         self.OnTitleSelected()
 
     def OnTitleSelected (self, event=None) :
         if not(self._loading_page) :
             self._busy = wx.BusyCursor()
-            self._loading_page = True
-            if self._rss_reader :
-                position = self._pagestart
-                position += self._listbox_title.GetSelection()
-                self._window_html.ChangePage(self._rss_reader.get_content(position))
-                categories = self._rss_reader.get_categories(position)
-                self._listbox_categories.Clear()
-                if categories is not None :
-                    for categorie in categories :
-                        self._listbox_categories.Append(categorie)
-                self._listbox_title.SetFocus()
-            self._loading_page = False
-            self._busy = None
+            try :
+                self._loading_page = True
+                if self._rss_reader :
+                    self._rss_reader.set_local_cursor_position(self._listbox_title.GetSelection())
+                
+                    position = self._rss_reader.get_cursor_position()
+                    self._window_html.ChangePage(self._rss_reader.get_content(position))
+                
+                    categories = self._rss_reader.get_categories(position)
+                    self._listbox_categories.Clear()
+                    if categories is not None :
+                        for categorie in categories :
+                            self._listbox_categories.Append(categorie)
+                    self._listbox_title.SetFocus()
+                self._loading_page = False
+            finally :
+                self._busy = None
 
     def Synchro (self, event=None) :
         self._busy = wx.BusyCursor()
-        self.SetCurrentStatus("Synchronizing...")
-        if self._rss_reader :
-            synchro_result = self._rss_reader.synchro()
-            if synchro_result is not None :
-                self.SetCurrentStatus(synchro_result)
-            else :
-                self.Populate(is_reload=True)
-        self._listbox_title.SetFocus()
-        self._busy = None
+        try :
+            self.SetCurrentStatus("Synchronizing...")
+            if self._rss_reader :
+                synchro_result = self._rss_reader.synchro()
+                if synchro_result is not None :
+                    self.SetCurrentStatus(synchro_result)
+                else :
+                    self.Populate(is_reload=True)
+            self._listbox_title.SetFocus()
+        finally :
+            self._busy = None
 
     def Reload (self, event=None) :
         self._busy = wx.BusyCursor()
-        self.SetCurrentStatus("Reloading...")
-        if self._rss_reader :
-            self._rss_reader.reload()
-            self.Populate(is_reload=True)
-        self._listbox_title.SetFocus()
-        self._busy = None
+        try :
+            self.SetCurrentStatus("Reloading...")
+            if self._rss_reader :
+                self._rss_reader.reload()
+                self.Populate(is_reload=True)
+            self._listbox_title.SetFocus()
+        finally :
+            self._busy = None
+
+    def Load (self, event=None) :
+        self._busy = wx.BusyCursor()
+        try :
+            self.SetCurrentStatus("Loading...")
+            if self._rss_reader :
+                self._rss_reader.load()
+                self.Populate(is_reload=True)
+            self._listbox_title.SetFocus()
+        finally :
+            self._busy = None
 
     def _ProcessOnItems (self, action, status) :
         self._busy = wx.BusyCursor()
-        if self._rss_reader :
-            items = self._listbox_title.GetSelectedItems()
-            items = map(lambda item:item+self._pagestart,items)
-            self.SetCurrentStatus(status % len(items))
-            action(items)
-            self.Reload()
-        self._busy = None
+        try :
+            if self._rss_reader :
+                def update_status(position, count, total) :
+                    self.SetCurrentStatus(status % {'position':position+1,'count':count,'total':total})
+            
+                self._rss_reader.process_selected_items(action=action, callback=update_status)
+                self.Reload()
+        finally :
+            self._busy = None
 
     def MarkAsRead (self, event=None) :
-        self._ProcessOnItems( self._rss_reader.mark_as_read, 'Marking %d items as read...' )
+        self._ProcessOnItems( self._rss_reader.mark_as_read, 'Marking item %(position)d as read (%(count)d/%(total)d)...' )
 
     def MarkAsUnread(self, event=None) :
-        self._ProcessOnItems( self._rss_reader.mark_as_unread, 'Marking %d items as unread...' )
+        self._ProcessOnItems( self._rss_reader.mark_as_unread, 'Marking item %(position)d as unread (%(count)d/%(total)d)...' )
 
     def AddStar(self, event=None) :
-        self._ProcessOnItems( self._rss_reader.add_star, 'Adding star on %d items...' )
+        self._ProcessOnItems( self._rss_reader.add_star, 'Adding star on item %(position)d (%(count)d/%(total)d)...' )
 
     def DelStar(self, event=None) :
-        self._ProcessOnItems( self._rss_reader.del_star, 'Removing star on %d items...' )
+        self._ProcessOnItems( self._rss_reader.del_star, 'Removing star on item %(position)d (%(count)d/%(total)d)...' )
 
     def AddPublic(self, event=None) :
-        self._ProcessOnItems( self._rss_reader.add_public, 'Adding public status on %d items...' )
+        self._ProcessOnItems( self._rss_reader.add_public, 'Adding public status on item %(position)d (%(count)d/%(total)d)...' )
 
     def DelPublic(self, event=None) :
-        self._ProcessOnItems( self._rss_reader.del_public, 'Removing public status on %d items...' )
+        self._ProcessOnItems( self._rss_reader.del_public, 'Removing public status on item %(position)d (%(count)d/%(total)d)...' )
 
     def AddLabel(self, event) :
         menu_id = event.GetId()
         if menu_id in self._labels_by_add_id :
             label = self._labels_by_add_id[menu_id]
-            self._ProcessOnItems( lambda positions : self._rss_reader.add_label(positions,label), 'Adding label "%s" on %%d items...' % label )
+            self._ProcessOnItems( lambda positions : self._rss_reader.add_label(positions,label), 'Adding label "%s" on item %%(position)d (%%(count)d/%%(total)d)...' % label )
 
     def DelLabel(self, event) :
         menu_id = event.GetId()
         if menu_id in self._labels_by_del_id :
             label = self._labels_by_del_id[menu_id]
-            self._ProcessOnItems( lambda positions : self._rss_reader.del_label(positions,label), 'Removing label "%s" on %%d items...' % label )
+            self._ProcessOnItems( lambda positions : self._rss_reader.del_label(positions,label), 'Removing label "%s" on item %%(position)d (%%(count)d/%%(total)d)...' % label )
 
     def ChangeLabels(self,labels) :
         if self._labels_in_menus != labels :
@@ -582,52 +592,95 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         menu_id = event.GetId()
         if menu_id in self._interface_name_by_menu_id :
             self._busy = wx.BusyCursor()
-            self._config['gui/next'] = self._interface_name_by_menu_id[menu_id]
-            self.Close()
-            self._busy = None
+            try :
+                self._config['gui/next'] = self._interface_name_by_menu_id[menu_id]
+                self.Close()
+            finally :
+                self._busy = None
+
+    def OpenItemInWebBrowser(self, position) :
+        link = self._rss_reader.get_link(position)
+        if link and link != '' :
+            webbrowser.open(link)
 
     def OpenInWebBrowser(self, event=None) :
         self._busy = wx.BusyCursor()
-        if self._rss_reader :
-            position = self._pagestart
-            position += self._listbox_title.GetSelection()
-            link = self._rss_reader.get_link(position)
-            if link and link != '' :
-                webbrowser.open(link)
-        self._busy = None
+        try :
+            if self._rss_reader :
+                self._rss_reader.process_current_item(action=self.OpenItemInWebBrowser)
+        finally :
+            self._busy = None
 
     def OpenMultiInWebBrowser(self, event=None) :
-        def openlink(positions) :
-            for position in positions :
-                link = self._rss_reader.get_link(position)
-                if link and link != '' :
-                    webbrowser.open(link)
-
-        self._ProcessOnItems( openlink, 'Opening links for %d items...' )
+        self._busy = wx.BusyCursor()
+        try :
+            if self._rss_reader :
+                def update_status(position, count, total) :
+                    self.SetCurrentStatus("Open link for item %(position)d (%(count)d/%(total)d)..." % {'position':position+1,'count':count,'total':total})
+            
+                self._rss_reader.process_selected_items(action=self.OpenItemInWebBrowser,callback=update_status)
+        finally :
+            self._busy = None
 
     def OnComboChange(self, event=None) :
         self._busy = wx.BusyCursor()
-        self.SetCurrentStatus("Filtering...")
-        if self._rss_reader :
-            self._rss_reader.set_filter(self._combo_filter.GetValue())
-            self.Populate()
-        self._busy = None
+        try :
+            self.SetCurrentStatus("Filtering...")
+            if self._rss_reader :
+                self._rss_reader.set_filter(self._combo_filter.GetValue())
+                self.Populate()
+        finally :
+            self._busy = None
 
     def OnCategoriesSelected(self, event=None) :
         self._busy = wx.BusyCursor()
-        categories_selected = ""
-        for categorie_position in self._listbox_categories.GetSelections() :
-            categories_selected += self._listbox_categories.GetString(categorie_position) + ' '
-        categories_selected.strip(' ')
+        try :
+            categories_selected = ""
+            for categorie_position in self._listbox_categories.GetSelections() :
+                categories_selected += self._listbox_categories.GetString(categorie_position) + ' '
+            categories_selected.strip(' ')
 
-        text_data_object = wx.TextDataObject()
-        text_data_object.SetText(categories_selected)
-        if self._clipboard.Open() :
-            self._clipboard.SetData(text_data_object)
-            self._clipboard.Close()
+            text_data_object = wx.TextDataObject()
+            text_data_object.SetText(categories_selected)
+            if self._clipboard.Open() :
+                self._clipboard.SetData(text_data_object)
+                self._clipboard.Close()
+        finally :
+            self._busy = None
 
-        self._busy = None
+    def SelectItem(self, local_position) :
+        self._rss_reader.set_local_cursor_position(local_position)
+        item_selected = self._rss_reader.select_item(self._rss_reader.get_cursor_position())
 
+        self.UpdateSelectedItemStatus()
+        
+        return item_selected
+
+    def UpdateSelectedItemStatus(self) :
+        selected_count = self._rss_reader.get_selected_item_count()
+        self._status_bar.SetStatusText("%d selected item"%selected_count+(selected_count>1 and "s" or ""),1)
+        
+        
+    def OnNextItem(self) :
+        page_number = self._rss_reader.get_page_number()
+        self._rss_reader.set_cursor_position(self._rss_reader.get_cursor_position()+1)
+        if page_number != self._rss_reader.get_page_number() :
+            self.Populate()
+        else :
+            self._rss_reader.get_local_cursor_position()
+            self._listbox_title.SetSelection(self._rss_reader.get_local_cursor_position())
+        self.OnTitleSelected(None)
+        
+    def OnPrevItem(self) :
+        page_number = self._rss_reader.get_page_number()
+        self._rss_reader.set_cursor_position(self._rss_reader.get_cursor_position()-1)
+        if page_number != self._rss_reader.get_page_number() :
+            self.Populate()
+        else :
+            self._rss_reader.get_local_cursor_position()
+            self._listbox_title.SetSelection(self._rss_reader.get_local_cursor_position())
+        self.OnTitleSelected(None)
+        
     def SetCurrentStatus(self, text) :
         self._current_status = text
         self._status_bar.SetStatusText(text,0)
@@ -644,25 +697,33 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
             text = ''
         self.SetCurrentStatus(text)
 
-    def SetSelectedCount(self, count) :
-        self._status_bar.SetStatusText("%d selected item"%count+(count>1 and "s" or ""),1)
-
     def FocusFilter(self, event=None) :
         self._combo_filter.SetFocus()
 
     def OnNextPage(self, event) :
         self._busy = wx.BusyCursor()
-        self.SetCurrentStatus("Changing page...")
-        self._pagestart += self._pagesize
-        self.Populate(same_titles=True)
-        self._busy = None
+        try :
+            self.SetCurrentStatus("Changing page...")
+            
+            page_number = self._rss_reader.get_page_number()
+            page_count = self._rss_reader.get_page_count()
+            if page_number < page_count-1:
+                self._rss_reader.set_page_number(page_number+1)
+                self.Populate()
+        finally :
+            self._busy = None
 
     def OnPreviousPage(self, event) :
         self._busy = wx.BusyCursor()
-        self.SetCurrentStatus("Changing page...")
-        self._pagestart -= self._pagesize
-        self.Populate(same_titles=True)
-        self._busy = None
+        try :
+            self.SetCurrentStatus("Changing page...")
+            
+            page_number = self._rss_reader.get_page_number()
+            if 0 < page_number :
+                self._rss_reader.set_page_number(page_number-1)
+                self.Populate()
+        finally :
+            self._busy = None
 
     def OnHelpDoc(self, event=None) :
         webbrowser.open('http://code.google.com/p/pyrfeed/wiki/pyrfeed')
@@ -785,13 +846,12 @@ class GuiInfoWx(GuiInfo) :
         rss_reader_frame.SetRssReader(self._rss_reader)
         app.SetTopWindow(rss_reader_frame)
         rss_reader_frame.Show()
-        rss_reader_frame.Reload()
+        rss_reader_frame.Load()
         app.MainLoop()
 
     def get_doc(self) :
         return ""
 
-register_key( 'pagesize', int, doc='Size of a page of items', default=30 )
 register_key( 'wx/sashposition', int, doc='Position of the Sash seperation in pixels', default=200 )
 register_key( 'wx/htmlwindow', str, doc='HTML Window component to use (simple/complex/best)', default='best' )
 

@@ -2,13 +2,17 @@ from GoogleReader import CONST
 from pyrfeed.database.reader_database import ReaderDatabase
 from pyrfeed.rss_reader.info import RssReaderInfo
 from pyrfeed.rss_reader.google_base import GoogleBase
+from pyrfeed.rss_reader.page_selector import PageSelector
 from pyrfeed.config import register_key
 
-class GoogleCache(GoogleBase) :
+class GoogleCache(PageSelector,GoogleBase) :
     def __init__(self,config) :
         GoogleBase.__init__(self,config)
+        PageSelector.__init__(self,config)
 
         database_name = self._config['database']
+        self._is_loaded = False
+        self._google_id_by_position = {}
         self._database = ReaderDatabase(database_name,debug=self._config['database-debug'])
 
     def synchro(self) :
@@ -68,13 +72,18 @@ class GoogleCache(GoogleBase) :
             self._database.stop_add_session()
             # print "(%s)" % xmlfeed.get_continuation()
             get_feed_args['continuation'] = xmlfeed.get_continuation()
-        return None
+        self.reload_titles()
+        self._is_loaded = True
 
     def reload(self) :
-        #self.synchro()
-        pass
+        self.reload_titles()
+        self._is_loaded = True
 
-    def get_titles(self) :
+    def load(self) :
+        if not(self._is_loaded) :
+            self.reload()
+
+    def reload_titles(self) :
         filter_command = self._filter
 
         self._google_id_by_position = {}
@@ -115,7 +124,17 @@ class GoogleCache(GoogleBase) :
             titles.append(items_info[1])
             position += 1
 
-        return titles
+        self.set_items(titles)
+
+    def set_filter(self,filter_command) :
+        GoogleBase.set_filter(self,filter_command)
+        self.reload_titles()
+
+    def get_title(self, position) :
+        if position not in self._google_id_by_position :
+            return ''
+        content = self._database.get_content(google_id=self._google_id_by_position[position])
+        return content['title']
 
     def get_content(self, position) :
         if position not in self._google_id_by_position :
@@ -143,29 +162,29 @@ class GoogleCache(GoogleBase) :
         filters.sort()
         return filters
 
-    def mark_as_read( self, positions ) :
-        self.edit_tag( positions=positions, add=CONST.ATOM_STATE_READ, remove=CONST.ATOM_STATE_UNREAD )
+    def mark_as_read( self, position ) :
+        self.edit_tag( positions=[position], add=CONST.ATOM_STATE_READ, remove=CONST.ATOM_STATE_UNREAD )
 
-    def mark_as_unread( self, positions ) :
-        self.edit_tag( positions=positions, add=CONST.ATOM_STATE_UNREAD, remove=CONST.ATOM_STATE_READ )
+    def mark_as_unread( self, position ) :
+        self.edit_tag( positions=[position], add=CONST.ATOM_STATE_UNREAD, remove=CONST.ATOM_STATE_READ )
 
-    def add_star( self, positions ) :
-        self.edit_tag( positions=positions, add=CONST.ATOM_STATE_STARRED )
+    def add_star( self, position ) :
+        self.edit_tag( positions=[position], add=CONST.ATOM_STATE_STARRED )
 
-    def del_star( self, positions ) :
-        self.edit_tag( positions=positions, remove=CONST.ATOM_STATE_STARRED )
+    def del_star( self, position ) :
+        self.edit_tag( positions=[position], remove=CONST.ATOM_STATE_STARRED )
 
-    def add_public( self, positions ) :
-        self.edit_tag( positions=positions, add=CONST.ATOM_STATE_BROADCAST )
+    def add_public( self, position ) :
+        self.edit_tag( positions=[position], add=CONST.ATOM_STATE_BROADCAST )
 
-    def del_public( self, positions ) :
-        self.edit_tag( positions=positions, remove=CONST.ATOM_STATE_BROADCAST )
+    def del_public( self, position ) :
+        self.edit_tag( positions=[position], remove=CONST.ATOM_STATE_BROADCAST )
 
-    def add_label( self, positions, labelname ) :
-        self.edit_tag( positions=positions, add=CONST.ATOM_PREFIXE_LABEL+labelname )
+    def add_label( self, position, labelname ) :
+        self.edit_tag( positions=[position], add=CONST.ATOM_PREFIXE_LABEL+labelname )
 
-    def del_label( self, positions, labelname ) :
-        self.edit_tag( positions=positions, remove=CONST.ATOM_PREFIXE_LABEL+labelname )
+    def del_label( self, position, labelname ) :
+        self.edit_tag( positions=[position], remove=CONST.ATOM_PREFIXE_LABEL+labelname )
 
     def edit_tag( self, positions, add=None, remove=None ) :
         self._database.start_add_session()
