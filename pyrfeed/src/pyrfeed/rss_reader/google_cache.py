@@ -164,29 +164,29 @@ class GoogleCache(PageSelector,GoogleBase) :
         filters.sort()
         return filters
 
-    def mark_as_read( self, position ) :
-        self.edit_tag( positions=[position], add=CONST.ATOM_STATE_READ, remove=CONST.ATOM_STATE_UNREAD )
+    def mark_as_read( self, positions ) :
+        self.edit_tag( positions=positions, add=CONST.ATOM_STATE_READ, remove=CONST.ATOM_STATE_UNREAD )
 
-    def mark_as_unread( self, position ) :
-        self.edit_tag( positions=[position], add=CONST.ATOM_STATE_UNREAD, remove=CONST.ATOM_STATE_READ )
+    def mark_as_unread( self, positions ) :
+        self.edit_tag( positions=positions, add=CONST.ATOM_STATE_UNREAD, remove=CONST.ATOM_STATE_READ )
 
-    def add_star( self, position ) :
-        self.edit_tag( positions=[position], add=CONST.ATOM_STATE_STARRED )
+    def add_star( self, positions ) :
+        self.edit_tag( positions=positions, add=CONST.ATOM_STATE_STARRED )
 
-    def del_star( self, position ) :
-        self.edit_tag( positions=[position], remove=CONST.ATOM_STATE_STARRED )
+    def del_star( self, positions ) :
+        self.edit_tag( positions=positions, remove=CONST.ATOM_STATE_STARRED )
 
-    def add_public( self, position ) :
-        self.edit_tag( positions=[position], add=CONST.ATOM_STATE_BROADCAST )
+    def add_public( self, positions ) :
+        self.edit_tag( positions=positions, add=CONST.ATOM_STATE_BROADCAST )
 
-    def del_public( self, position ) :
-        self.edit_tag( positions=[position], remove=CONST.ATOM_STATE_BROADCAST )
+    def del_public( self, positions ) :
+        self.edit_tag( positions=positions, remove=CONST.ATOM_STATE_BROADCAST )
 
-    def add_label( self, position, labelname ) :
-        self.edit_tag( positions=[position], add=CONST.ATOM_PREFIXE_LABEL+labelname )
+    def add_label( self, positions, labelname ) :
+        self.edit_tag( positions=positions, add=CONST.ATOM_PREFIXE_LABEL+labelname )
 
-    def del_label( self, position, labelname ) :
-        self.edit_tag( positions=[position], remove=CONST.ATOM_PREFIXE_LABEL+labelname )
+    def del_label( self, positions, labelname ) :
+        self.edit_tag( positions=positions, remove=CONST.ATOM_PREFIXE_LABEL+labelname )
 
     def edit_tag( self, positions, add=None, remove=None ) :
         self._database.start_add_session()
@@ -217,5 +217,5 @@ class RssReaderInfoGoogleCache(RssReaderInfo) :
         return ""
 
 register_key( 'database', str, doc='The database name for GoogleCache mode', default='reader.sqlite3' )
-register_key( 'database-debug', bool, doc='Database will log every sql query if true. Developers only.', default=0 )
+register_key( 'database-debug', bool, doc='Database will log every sql query if true. Developers only.', default=0, advanced=True )
 

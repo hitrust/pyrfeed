@@ -29,6 +29,6 @@ class _GuiInfoList(ElementInfoList) :
 
 gui_info_list = _GuiInfoList()
 
-register_key( 'gui', str, doc='The Gui name to use', default=None )
-register_key( 'gui/next', str, doc='Next gui to launch when exiting', default=None, internal=True )
+register_key( 'gui', str, doc='The Gui name to use', default=None, advanced=True )
+register_key( 'gui/next', str, doc='Next gui to launch when exiting', default=None, internal=True, advanced=True )
 

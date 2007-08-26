@@ -81,15 +81,15 @@ class GoogleBase(object) :
         return get_feed_args
 
 register_key( 'google/max_count', int, doc='The size of the feed to fetch from google', default=200 )
-register_key( 'google/include_read', bool, doc='If true, will fetch all items, otherwise will fetch only unread ones', default=True )
-register_key( 'url', str, doc='The url of the google feed to fetch', default=None )
-register_key( 'label', str, doc='The label of google reader to fetch', default=None )
-register_key( 'feed', str, doc='The feed to fetch on google', default=None )
+register_key( 'google/include_read', bool, doc='If true, will fetch all items, otherwise will fetch only unread ones', default=True, advanced=True )
+register_key( 'url', str, doc='The url of the google feed to fetch', default=None, advanced=True )
+register_key( 'label', str, doc='The label of google reader to fetch', default=None, advanced=True )
+register_key( 'feed', str, doc='The feed to fetch on google', default=None, advanced=True )
 
-register_key( 'filter', str, doc='the filter at start to search items', default='' )
+register_key( 'filter', str, doc='the filter at start to search items', default='', advanced=True )
 register_key( 'login', str, doc='Google login', default=None )
 register_key( 'passwd', str, doc='Google password', default=None )
 
-register_key( 'datefmt', str, doc='the strftime format for date', default='%Y-%m-%d %H:%M:%S' )
+register_key( 'datefmt', str, doc='the strftime format for date', default='%Y-%m-%d %H:%M:%S', advanced=True )
 register_key( 'proxy_host', str, doc='Host for proxy', default='' )
 register_key( 'proxy_port', int, doc='Port for proxy', default=3128 )

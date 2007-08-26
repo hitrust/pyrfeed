@@ -111,40 +111,40 @@ class GoogleDirect(PageSelector,GoogleBase) :
         filters.sort()
         return filters
 
-    def mark_as_read( self, position ) :
-        #for position in positions :
+    def mark_as_read( self, positions ) :
+        for position in positions :
             self._get_googlereader().set_read(self._filtered_items[position]['google_id'])
 
-    def mark_as_unread( self, position ) :
-        #for position in positions :
+    def mark_as_unread( self, positions ) :
+        for position in positions :
             self._get_googlereader().set_unread(self._filtered_items[position]['google_id'])
 
-    def add_star( self, position ) :
-        #for position in positions :
+    def add_star( self, positions ) :
+        for position in positions :
             self._get_googlereader().add_star(self._filtered_items[position]['google_id'])
 
-    def del_star( self, position ) :
-        #for position in positions :
+    def del_star( self, positions ) :
+        for position in positions :
             self._get_googlereader().del_star(self._filtered_items[position]['google_id'])
 
-    def add_public( self, position ) :
-        #for position in positions :
+    def add_public( self, positions ) :
+        for position in positions :
             self._get_googlereader().add_public(self._filtered_items[position]['google_id'])
 
-    def del_public( self, position ) :
-        #for position in positions :
+    def del_public( self, positions ) :
+        for position in positions :
             self._get_googlereader().del_public(self._filtered_items[position]['google_id'])
 
-    def add_label( self, position, label ) :
+    def add_label( self, positions, label ) :
         if label.startswith('label:') :
             label = label[len('label:'):]
-        #for position in positions :
+        for position in positions :
             self._get_googlereader().add_label(self._filtered_items[position]['google_id'],labelname=label)
 
-    def del_label( self, position, label ) :
+    def del_label( self, positions, label ) :
         if label.startswith('label:') :
             label = label[len('label:'):]
-        #for position in positions :
+        for position in positions :
             self._get_googlereader().del_label(self._filtered_items[position]['google_id'],labelname=label)
 
 class RssReaderInfoGoogleDirect(RssReaderInfo) :

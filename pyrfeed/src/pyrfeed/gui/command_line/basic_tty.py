@@ -300,13 +300,11 @@ class BasicTTY(object):
                 webbrowser.open(link)
 
     def do_MARKASREAD(self,command_name,*args) :
-        for position in self.get_selection_list(args) : 
-            self._rss_reader.mark_as_read(position)
+        self._rss_reader.process_selected_items( action=self._rss_reader.mark_as_read, selection=self.get_selection_list(args) )
         self.reload()
 
     def do_MARKASUNREAD(self,command_name,*args) :
-        for position in self.get_selection_list(args) : 
-            self._rss_reader.mark_as_unread(position)
+        self._rss_reader.process_selected_items( action=self._rss_reader.mark_as_unread, selection=self.get_selection_list(args) )
         self.reload()
 
     def do_SEARCH(self,command_name,*args) :
@@ -364,28 +362,28 @@ class BasicTTY(object):
             self._print('  %s\n' % filter_command)
 
     def do_ADDSTAR(self,command_name,*args) :
-        for position in self.get_selection_list(args) :
-            self._rss_reader.add_star(position)
+        self._rss_reader.process_selected_items( action=self._rss_reader.add_star, selection=self.get_selection_list(args) )
+        self.reload()
 
     def do_DELSTAR(self,command_name,*args) :
-        for position in self.get_selection_list(args) :
-            self._rss_reader.del_star(position)
+        self._rss_reader.process_selected_items( action=self._rss_reader.del_star, selection=self.get_selection_list(args) )
+        self.reload()
 
     def do_ADDPUBLIC(self,command_name,*args) :
-        for position in self.get_selection_list(args) :
-            self._rss_reader.add_public(position)
+        self._rss_reader.process_selected_items( action=self._rss_reader.add_public, selection=self.get_selection_list(args) )
+        self.reload()
 
     def do_DELPUBLIC(self,command_name,*args) :
-        for position in self.get_selection_list(args) :
-            self._rss_reader.del_public(position)
+        self._rss_reader.process_selected_items( action=self._rss_reader.del_public, selection=self.get_selection_list(args) )
+        self.reload()
 
     def do_ADDLABEL(self,command_name,*args) :
-        for position in self.get_selection_list(args[1:]) :
-            self._rss_reader.add_label(position,args[0])
+        self._rss_reader.process_selected_items( action=lambda positions:self._rss_reader.add_label(positions,args[0]), selection=self.get_selection_list(args[1:]) )
+        self.reload()
 
     def do_DELLABEL(self,command_name,*args) :
-        for position in self.get_selection_list(args[1:]) :
-            self._rss_reader.del_label(position,args[0])
+        self._rss_reader.process_selected_items( action=lambda positions:self._rss_reader.del_label(positions,args[0]), selection=self.get_selection_list(args[1:]) )
+        self.reload()
 
     def do_SWITCH(self,command_name,*args) :
         if len(args) > 0 :
@@ -420,8 +418,8 @@ class GuiInfoTTY(GuiInfo) :
     def get_doc(self) :
         return ""
 
-register_key( 'tty/encoding', str, doc='TTY Encoding', default='iso-8859-1' )
-register_key( 'tty/screensize', int, doc='Width of the TTY', default=80 )
+register_key( 'tty/encoding', str, doc='TTY Encoding', default='iso-8859-1', advanced=True )
+register_key( 'tty/screensize', int, doc='Width of the TTY', default=80, advanced=True )
 
 # 'gui/next' will be handled elsewere for registration
 
