@@ -51,6 +51,8 @@ class GoogleDirect(PageSelector,GoogleBase) :
                     if filter_element.startswith('-') :
                         need_mode = False
                         filter_element = filter_element[1:]
+                    if filter_element.startswith('+') :
+                        filter_element = filter_element[1:]
                     if filter_element in self._categorie_by_name :
                         need_item_with_this_filter |= item['google_id'] in self._google_id_by_categorie[self._categorie_by_name[filter_element]]
                     else :
