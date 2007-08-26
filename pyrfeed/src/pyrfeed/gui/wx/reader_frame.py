@@ -434,7 +434,9 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
             if self._rss_reader.get_page_count() > 1 :
                 item_count += ' (page %d/%d)' % (self._rss_reader.get_page_number()+1,self._rss_reader.get_page_count())
 
-            self._listbox_title.SetSelection(self._rss_reader.get_local_cursor_position())
+            cursor_position = self._rss_reader.get_local_cursor_position()
+            if 0 <= cursor_position < self._rss_reader.get_item_count() :
+                self._listbox_title.SetSelection(cursor_position)
 
             self.SetCurrentStatus(item_count)
             self.UpdateSelectedItemStatus()
