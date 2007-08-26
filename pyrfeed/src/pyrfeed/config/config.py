@@ -46,6 +46,9 @@ class ConfigClass(object) :
         # print result
         return result
 
+    def __contains__(self,key) :
+        return key in self.config_keys
+
     def __setitem__(self,key,value) :
         if key not in self.config_keys :
             raise InvalidConfigurationKey("%s is not a valid configuration key" % key)

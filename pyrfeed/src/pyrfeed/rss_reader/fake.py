@@ -4,9 +4,11 @@ import os
 import sys
 
 from pyrfeed.rss_reader.info import RssReaderInfo
+from pyrfeed.rss_reader.page_selector import PageSelector
 
-class Reader(object) :
+class FakeReader(PageSelector) :
     def __init__(self,config) :
+        PageSelector.__init__(self,config)
         self._items = [
             {
                 'title' : 'Test',
@@ -45,6 +47,7 @@ class Reader(object) :
             'Choice2',
             ]
         self._filter = ''
+        self._is_loaded = False
 
     def synchro(self) :
         pass
@@ -52,8 +55,16 @@ class Reader(object) :
     def reload(self) :
         pass
 
-    def get_titles(self,filter_command=None) :
-        return map(lambda x:x['title'],self._items)
+    def load(self) :
+        if not(self._is_loaded) :
+            self.reload_titles()
+
+    def reload_titles(self,filter_command=None) :
+        self.set_items(map(lambda x:x['title'],self._items))
+        self._is_loaded = True
+
+    def get_title(self, position) :
+        return self._items[position]['title']
 
     def get_content(self, position) :
         return self._items[position]['content']
@@ -65,6 +76,9 @@ class Reader(object) :
         return self._items[position]['categories']
 
     def get_filters(self) :
+        return self._filters
+
+    def get_filters_diff(self) :
         return self._filters
 
     def mark_as_read( self, positions ) :
@@ -101,6 +115,6 @@ class RssReaderInfoFake(RssReaderInfo) :
     names = ['Fake','test']
     priority = 10
     def get_rss_reader(self) :
-        return Reader(self._config)
+        return FakeReader(self._config)
     def get_doc(self) :
         return ""

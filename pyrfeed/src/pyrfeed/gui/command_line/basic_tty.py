@@ -20,29 +20,34 @@ class ExceptionNoCommand(Exception) :
 class TTYCommands(object) :
     _commands = {
         'QUIT'              : { 'names' : [ 'q',          ], 'importance' : 10, 'comment' : 'Quit' },
-        'SEARCH'            : { 'names' : [ '/',          ], 'importance' : 10, 'comment' : 'Search' },
-        'SHOW'              : { 'names' : [ 's',          ], 'importance' : 10, 'comment' : 'Show an item' },
+        'SEARCH'            : { 'names' : [ '/',          ], 'importance' : 20, 'comment' : 'Search' },
+        'SHOW'              : { 'names' : [ 's',          ], 'importance' : 20, 'comment' : 'Show the current page and change the current position' },
+        'SELECT'            : { 'names' : [ 'x',          ], 'importance' : 20, 'comment' : 'Select items' },
+        'NEXT'              : { 'names' : [ 'j',          ], 'importance' : 20, 'comment' : 'Go to next position' },
+        'PREV'              : { 'names' : [ 'k',          ], 'importance' : 20, 'comment' : 'Go to previous position' },
         'RELOAD'            : { 'names' : [ 'R',          ], 'importance' : 10, 'comment' : 'Reload' },
         'SYNCHRO'           : { 'names' : [ 'S',          ], 'importance' : 10, 'comment' : 'Synchro' },
-        'VIEW'              : { 'names' : [ 'v',          ], 'importance' : 10, 'comment' : 'View an item' },
-        'VIEWDETAILS'       : { 'names' : [ 'V',          ], 'importance' : 10, 'comment' : 'View details of an item' },
-        'OPEN'              : { 'names' : [ 'o',          ], 'importance' : 10, 'comment' : 'Open an item' },
+        'VIEW'              : { 'names' : [ 'v',          ], 'importance' : 10, 'comment' : 'View a list of items' },
+        'VIEWDETAILS'       : { 'names' : [ 'V',          ], 'importance' : 10, 'comment' : 'View details of a list of items' },
+        'VIEWNEXT'          : { 'names' : [ 'vn',         ], 'importance' : 10, 'comment' : 'View current item and go to next' },
+        'VIEWDETAILSNEXT'   : { 'names' : [ 'VN',         ], 'importance' : 10, 'comment' : 'View details of current item and go to next' },
+        'OPENCURRENT'       : { 'names' : [ 'o',          ], 'importance' : 10, 'comment' : 'Open current item' },
+        'OPENALL'           : { 'names' : [ 'O',          ], 'importance' : 10, 'comment' : 'Open a list of items' },
         'ENCODE'            : { 'names' : [ 'e',          ], 'importance' :  0, 'comment' : 'Set the current tty encoding' },
-        'MARKASREAD'        : { 'names' : [ 'r',          ], 'importance' : 10, 'comment' : 'Mark an item as read' },
-        'MARKASUNREAD'      : { 'names' : [ 'u',          ], 'importance' : 10, 'comment' : 'Mark an item as unread' },
+        'MARKASREAD'        : { 'names' : [ 'r',          ], 'importance' : 10, 'comment' : 'Mark a list of items as read' },
+        'MARKASUNREAD'      : { 'names' : [ 'u',          ], 'importance' : 10, 'comment' : 'Mark a list of items as unread' },
         'SAVE'              : { 'names' : [ 'save',       ], 'importance' :  0, 'comment' : 'Save configuration' },
         'SET'               : { 'names' : [ 'set',        ], 'importance' :  0, 'comment' : 'Set a configuration key' },
         'GET'               : { 'names' : [ 'get',        ], 'importance' :  0, 'comment' : 'Get a configuration key' },
         'DEL'               : { 'names' : [ 'del',        ], 'importance' :  0, 'comment' : 'Delete a configuration key' },
         'SHOWFILTERS'       : { 'names' : [ 'f',          ], 'importance' :  0, 'comment' : 'Show all filters' },
         'SHOWFILTERSDIFF'   : { 'names' : [ 'F',          ], 'importance' :  0, 'comment' : 'Show filters applicable over the current filter' },
-        'ADDSTAR'           : { 'names' : [ 'addstar',    ], 'importance' :  5, 'comment' : 'Add star to an item' },
-        'DELSTAR'           : { 'names' : [ 'delstar',    ], 'importance' :  5, 'comment' : 'Delete star from an item' },
-        'ADDPUBLIC'         : { 'names' : [ 'addpublic',  ], 'importance' :  5, 'comment' : 'Add public status to an item' },
-        'DELPUBLIC'         : { 'names' : [ 'delpublic',  ], 'importance' :  5, 'comment' : 'Remove public status from an item' },
-        'ADDLABEL'          : { 'names' : [ 'addlabel',   ], 'importance' :  5, 'comment' : 'Add label to an item' },
-        'DELLABEL'          : { 'names' : [ 'dellabel',   ], 'importance' :  5, 'comment' : 'Remove label from an item' },
-        'SWITCHWX'          : { 'names' : [ 'wx',         ], 'importance' :  0, 'comment' : 'Switch to wx user interface' },
+        'ADDSTAR'           : { 'names' : [ 'addstar',    ], 'importance' :  5, 'comment' : 'Add star to a list of items' },
+        'DELSTAR'           : { 'names' : [ 'delstar',    ], 'importance' :  5, 'comment' : 'Delete star from a list of items' },
+        'ADDPUBLIC'         : { 'names' : [ 'addpublic',  ], 'importance' :  5, 'comment' : 'Add public status to a list of items' },
+        'DELPUBLIC'         : { 'names' : [ 'delpublic',  ], 'importance' :  5, 'comment' : 'Remove public status from a list of items' },
+        'ADDLABEL'          : { 'names' : [ 'addlabel',   ], 'importance' :  5, 'comment' : 'Add label to a list of items' },
+        'DELLABEL'          : { 'names' : [ 'dellabel',   ], 'importance' :  5, 'comment' : 'Remove label from a list of items' },
         'SWITCH'            : { 'names' : [ 'switch',     ], 'importance' :  0, 'comment' : 'Switch to another user interface' },
         'HELP'              : { 'names' : [ 'help', '?',  ], 'importance' : 10, 'comment' : 'Show help' },
         }
@@ -56,10 +61,10 @@ class TTYCommands(object) :
 
     def parse_line(self,line,executor) :
         '''This method execute the command specified in the 'line' assuming executor implement command do_XXXXX if XXXXX is a valid command and have been specified in the line'''
-        
+
         action = line.strip('\r\n')
         action_list = filter(len,action.split(' '))
-        
+
         result = None
 
         if len(action_list)>0 :
@@ -67,9 +72,9 @@ class TTYCommands(object) :
             command_name = action_list[0]
             if command_name in self._command_id_by_name :
                 # Ok, the command is valid
-                
+
                 command_id = self._command_id_by_name[command_name]
-                
+
                 method_name = 'do_'+command_id
                 if hasattr(executor,method_name) :
                     # Everything is ok here... We call the method...
@@ -105,14 +110,15 @@ class BasicTTY(object):
         self._rss_reader = None
         self._filters = []
         self._filters_diff = []
-        self._titles = []
+        self._titles = {}
         self._encoding = self._config['tty/encoding']
         
         self._need_quit = False
 
     def set_rss_reader(self,rss_reader) :
         self._rss_reader = rss_reader
-        self.reload()
+        self._rss_reader.load()
+        self.print_title()
 
     def _get_line(self) :
         return sys.stdin.readline()
@@ -132,26 +138,31 @@ class BasicTTY(object):
             self._rss_reader.reload()
             self.print_title()
 
-    def print_title(self,positions=None):
+    def format_title(self,title) :
+        return html2text_file(title,None).strip('\r\n ').replace('\n',' ')
+
+    def print_title(self):
         if self._rss_reader :
-            pagesize = self._config['pagesize']
             screensize = self._config['tty/screensize']
 
-            self._titles = map(lambda title:html2text_file(title,None).strip('\r\n ').replace('\n',' '),self._rss_reader.get_titles())
+            self._page = map(lambda (position,selected,title):(position,selected,self.format_title(title)),self._rss_reader.get_page())
             self._print("Current filter : [%s]\n" % (self._rss_reader.get_filter(),))
             self._print("\n")
-            if positions == None :
-                positions = xrange(len(self._titles))
-            for position in list(positions)[:pagesize] :
-                self._print(" %3d. - %s\n" % (position+1,self._titles[position][:screensize-5]))
+
+            current_position = self._rss_reader.get_cursor_position()
+            for position,selected,title in self._page :
+                self._titles[position] = title
+                self._print(" %3d. [%s]%s%s\n" % (position+1, selected and "X" or " ", (current_position==position) and ">" or " ", title[:screensize-11]))
+
             self._filters = self._rss_reader.get_filters()
             self._filters_diff = self._rss_reader.get_filters_diff()
             self._print("\n")
-            self._print("%d items\n" % len(self._titles))
+            self._print("%d items\n" % self._rss_reader.get_item_count())
 
     def get_int_list(self,args) :
         int_list = []
         for arg in args :
+        
             if '-' in arg :
                 interval = arg.split('-')
                 # TODO : Check len(interval) == 2
@@ -162,16 +173,28 @@ class BasicTTY(object):
                     interval[0] = int(interval[0])-1
 
                 if interval[1] == '' :
-                    interval[1] = len(self._titles)-1
+                    interval[1] = self._rss_reader.get_item_count()-1
                 else :
                     # TODO : Check interval[1] is an int
                     interval[1] = int(interval[1])-1
                 int_list += range(interval[0],interval[1]+1)
+            elif arg in ('x','X') :
+                int_list += self._rss_reader.get_selected_items()
+            elif arg in ('c','C') :
+                int_list += [self._rss_reader.get_cursor_position()]
             else :
                 # TODO : Check arg is an int
                 int_list.append(int(arg)-1)
         return int_list
 
+    def get_selection_list(self,args) :
+        positions = self.get_int_list(args)
+        if len(positions) == 0 :
+            positions = self._rss_reader.get_selected_items()
+            if len(positions) == 0 :
+                positions = [self._rss_reader.get_cursor_position()]
+        return positions
+        
     def main_loop(self) :
         self._commands = TTYCommands()
         
@@ -206,16 +229,30 @@ class BasicTTY(object):
         self.synchro()
 
     def do_SHOW(self,command_name,*args) :
-        if len(args)==0 :
-            self.print_title()
-        else :
-            self.print_title(self.get_int_list(args))
+        if len(args)>0 :
+            position = self.get_int_list(args)[-1]
+            self._rss_reader.set_cursor_position(position)
+
+        self.print_title()
+
+    def do_SELECT(self,command_name,*args) :
+        for position in self.get_selection_list(args) :
+            self._rss_reader.select_item(position)
+        self.print_title()
+
+    def do_NEXT(self,command_name,*args) :
+        self._rss_reader.set_cursor_position(self._rss_reader.get_cursor_position()+1)
+        self.print_title()
+
+    def do_PREV(self,command_name,*args) :
+        self._rss_reader.set_cursor_position(self._rss_reader.get_cursor_position()-1)
+        self.print_title()
 
     def do_VIEW_DETAILS_OR_NOT(self,command_name,details,*args) :
-        for position in self.get_int_list(args) :
+        for position in self.get_selection_list(args) :
             self._print('\n')
             self._print('='*3+' [ '+('%3d'%(position+1,))+' ] '+'='*58+'\n')
-            self._print(self._titles[position]+'\n')
+            self._print(self.format_title(self._rss_reader.get_title(position))+'\n')
             self._print('-'*65+'\n')
             if details :
                 link = self._rss_reader.get_link(position)
@@ -233,28 +270,43 @@ class BasicTTY(object):
                     if len(categories)>0 :
                         self._print('-'*65+'\n')
 
+    def do_VIEW(self,command_name,*args) :
+        self.do_VIEW_DETAILS_OR_NOT(command_name,False,*args)
+
     def do_VIEWDETAILS(self,command_name,*args) :
         self.do_VIEW_DETAILS_OR_NOT(command_name,True,*args)
 
-    def do_VIEW(self,command_name,*args) :
-        self.do_VIEW_DETAILS_OR_NOT(command_name,False,*args)
+    def do_VIEWNEXT(self,command_name,*args) :
+        self.do_VIEW_DETAILS_OR_NOT(command_name,False)
+        self._rss_reader.set_cursor_position(self._rss_reader.get_cursor_position()+1)
+
+    def do_VIEWDETAILSNEXT(self,command_name,*args) :
+        self.do_VIEW_DETAILS_OR_NOT(command_name,True)
+        self._rss_reader.set_cursor_position(self._rss_reader.get_cursor_position()+1)
 
     def do_ENCODE(self,command_name,*args) :
         # test on len(args) ? or let crash ?
         self._encoding = args[0]
 
-    def do_OPEN(self,command_name,*args) :
-        for position in self.get_int_list(args) :
+    def do_OPENCURRENT(self,command_name,*args) :
+        link = self._rss_reader.get_link(self._rss_reader.get_cursor_position())
+        if link and link != '' :
+            webbrowser.open(link)
+
+    def do_OPENALL(self,command_name,*args) :
+        for position in self.get_selection_list(args) :
             link = self._rss_reader.get_link(position)
             if link and link != '' :
                 webbrowser.open(link)
 
     def do_MARKASREAD(self,command_name,*args) :
-        self._rss_reader.mark_as_read(self.get_int_list(args))
+        for position in self.get_selection_list(args) : 
+            self._rss_reader.mark_as_read(position)
         self.reload()
 
     def do_MARKASUNREAD(self,command_name,*args) :
-        self._rss_reader.mark_as_unread(self.get_int_list(args))
+        for position in self.get_selection_list(args) : 
+            self._rss_reader.mark_as_unread(position)
         self.reload()
 
     def do_SEARCH(self,command_name,*args) :
@@ -273,10 +325,17 @@ class BasicTTY(object):
                 if key == 'passwd' :
                     # Urk ! not nice !
                     value = '*' * 16
-                self._print('%s=%s\n' % (key,value))
+                self._print('%s %s\n' % (key,value))
 
     def do_GET(self,command_name,*args) :
-        self._print('%s=%s\n' % (args[0],self._config[args[0]]))
+        if len(args) > 0 :
+            for arg in args : 
+                if arg in self._config :
+                    self._print('%s %s\n' % (arg,self._config[arg]))
+                else :
+                    self._print('  %s is not configurable\n' % (arg,))
+        else :
+            self._print('TODO: GET\n')
 
     def do_DEL(self,command_name,*args) :
         del self._config[args[0]]
@@ -292,22 +351,28 @@ class BasicTTY(object):
             self._print('  %s\n' % filter_command)
 
     def do_ADDSTAR(self,command_name,*args) :
-        self._rss_reader.add_star(self.get_int_list(args))
+        for position in self.get_selection_list(args) :
+            self._rss_reader.add_star(position)
 
     def do_DELSTAR(self,command_name,*args) :
-        self._rss_reader.del_star(self.get_int_list(args))
+        for position in self.get_selection_list(args) :
+            self._rss_reader.del_star(position)
 
     def do_ADDPUBLIC(self,command_name,*args) :
-        self._rss_reader.add_public(self.get_int_list(args))
+        for position in self.get_selection_list(args) :
+            self._rss_reader.add_public(position)
 
     def do_DELPUBLIC(self,command_name,*args) :
-        self._rss_reader.del_public(self.get_int_list(args))
+        for position in self.get_selection_list(args) :
+            self._rss_reader.del_public(position)
 
     def do_ADDLABEL(self,command_name,*args) :
-        self._rss_reader.add_label(self.get_int_list(args[1:]),args[0])
+        for position in self.get_selection_list(args[1:]) :
+            self._rss_reader.add_label(position,args[0])
 
     def do_DELLABEL(self,command_name,*args) :
-        self._rss_reader.del_label(self.get_int_list(args[1:]),args[0])
+        for position in self.get_selection_list(args[1:]) :
+            self._rss_reader.del_label(position,args[0])
 
     def do_SWITCH(self,command_name,*args) :
         if len(args) > 0 :
@@ -342,7 +407,6 @@ class GuiInfoTTY(GuiInfo) :
     def get_doc(self) :
         return ""
 
-register_key( 'pagesize', int, doc='Size of a page of items', default=30 )
 register_key( 'tty/encoding', str, doc='TTY Encoding', default='iso-8859-1' )
 register_key( 'tty/screensize', int, doc='Width of the TTY', default=80 )
 
