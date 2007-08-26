@@ -18,7 +18,7 @@ class ConfigClass(object) :
         self._filename = None
         self._non_persistant = {'':[]}
 
-        self.process_argv(argv)
+        self.process_argv(None,argv)
         self.load()
 
     def _get_default(self,key) :
@@ -95,28 +95,37 @@ class ConfigClass(object) :
                     self[key] = value
         self.save()
 
-    def process_argv(self,argv) :
-        for arg in argv :
-            if arg[:2]=='--' :
-                if '=' in arg :
-                    key,value = arg[2:].split('=',1)
-                    if key not in self.config_keys :
-                        raise InvalidConfigurationKey("%s is not a valid configuration key" % key)
-                    self._non_persistant[key] = value
-                else :
-                    if arg[-1:] == '-' :
-                        key = arg[2:-1]
+    def process_argv(self,binname=None,argv=None) :
+        if binname is not None :
+            binpath,binname = os.path.split(binname)
+            respath = os.path.join(binpath,'..','res')
+            userdatapath = os.path.join(binpath,'..')
+            self._non_persistant['binpath'] = binpath
+            self._non_persistant['respath'] = respath
+            self._non_persistant['userdatapath'] = userdatapath
+            self._non_persistant['binname'] = binname
+        if argv is not None :
+            for arg in argv :
+                if arg[:2]=='--' :
+                    if '=' in arg :
+                        key,value = arg[2:].split('=',1)
                         if key not in self.config_keys :
                             raise InvalidConfigurationKey("%s is not a valid configuration key" % key)
-                        self._non_persistant[key] = None
+                        self._non_persistant[key] = value
                     else :
-                        key = arg[2:]
-                        if key not in self.config_keys :
-                            raise InvalidConfigurationKey("%s is not a valid configuration key" % key)
-                        keytype = self.config_keys[key]['type']
-                        self._non_persistant[key] = self.config_types[keytype]['from_type'](self.config_types[keytype]['default'])
-            else :
-                self._non_persistant[''].append(arg)
+                        if arg[-1:] == '-' :
+                            key = arg[2:-1]
+                            if key not in self.config_keys :
+                                raise InvalidConfigurationKey("%s is not a valid configuration key" % key)
+                            self._non_persistant[key] = None
+                        else :
+                            key = arg[2:]
+                            if key not in self.config_keys :
+                                raise InvalidConfigurationKey("%s is not a valid configuration key" % key)
+                            keytype = self.config_keys[key]['type']
+                            self._non_persistant[key] = self.config_types[keytype]['from_type'](self.config_types[keytype]['default'])
+                else :
+                    self._non_persistant[''].append(arg)
 
     def get_filename(self,filename=None) :
         """Acces to the filename of the configuration file."""

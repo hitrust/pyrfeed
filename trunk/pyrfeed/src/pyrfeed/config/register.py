@@ -39,7 +39,7 @@ def register_type( keytype, from_type=None, from_str=None, from_type_exception=N
         'default' : default
         }
 
-def register_key( name, keytype, doc, default=None, internal=False ) :
+def register_key( name, keytype, doc, default=None, internal=False, advanced=False ) :
     if keytype not in ConfigClass.config_types :
         raise TypeError
 
@@ -49,6 +49,7 @@ def register_key( name, keytype, doc, default=None, internal=False ) :
         'doc' : doc,
         'default' : default,
         'internal' : internal,
+        'advanced' : advanced,
         }
     if name in ConfigClass.config_keys :
         if config_key != ConfigClass.config_keys[name] :

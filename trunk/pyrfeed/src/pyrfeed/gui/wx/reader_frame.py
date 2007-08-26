@@ -75,6 +75,12 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
     def _create_status_bar( self, parent ) :
         self._status_bar = wx.StatusBar(parent)
 
+    def _get_bitmap( self, name ) :
+        pathname = os.path.join('..','res','toolbar',name+'.png')
+        if not(os.path.exists(pathname)) :
+            pathname = os.path.join('..','res','toolbar','none'+'.png')
+        return wx.Bitmap(pathname)
+
     def _set_properties(self) :
         self._status_bar.SetFieldsCount(2)
         self.SetStatusBar(self._status_bar)
@@ -225,6 +231,55 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                     ],
                 'help' : 'Set focus to filter component',
                 },
+            'VIEWALL' : {
+                'action' : self.ViewAllItems,
+                # 'bitmap' : 'viewall',
+                'accels' : [
+                    ],
+                'help' : 'View all items (no filters at all)',
+                },
+            'VIEWUNREAD' : {
+                'action' : self.ViewUnreadItems,
+                # 'bitmap' : 'viewunread',
+                'accels' : [
+                    ],
+                'help' : 'View all unread items (from all feeds)',
+                },
+            'FILTERUNREAD' : {
+                'action' : self.FilterUnreadItems,
+                # 'bitmap' : 'viewunread',
+                'accels' : [
+                    ],
+                'help' : 'View all unread items (from current filters)',
+                },
+            'SORTBYTIME' : {
+                'action' : self.SortByTime,
+                # 'bitmap' : 'sortbytime',
+                'accels' : [
+                    ],
+                'help' : 'Sort current items by crawled time (ascending)',
+                },
+            'SORTBYTIMEDESC' : {
+                'action' : self.ViewUnreadItems,
+                # 'bitmap' : 'sortbytimedesc',
+                'accels' : [
+                    ],
+                'help' : 'Sort current items by crawled time (descending)',
+                },
+            'SORTBYTITLE' : {
+                'action' : self.SortByTitle,
+                # 'bitmap' : 'sortbytitle',
+                'accels' : [
+                    ],
+                'help' : 'Sort current items by title (ascending)',
+                },
+            'SORTBYTITLEDESC' : {
+                'action' : self.SortByTitleDesc,
+                # 'bitmap' : 'sortbytitledesc',
+                'accels' : [
+                    ],
+                'help' : 'Sort current items by title (descending)',
+                },
             'HELPDOC' : {
                 'action' : self.OnHelpDoc,
                 'bitmap' : 'helpdoc',
@@ -317,6 +372,16 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
             ('-/-/-',                                       ),
             ('-/-',                                         ),
             ('-/Add &Filter',                               'ADDFILTER' ),
+            ('&View',                                       ),
+            ('-/View all items',                            'VIEWALL'),
+            ('-/View all unread items',                     'VIEWUNREAD'),
+            ('-/-',                                         ),
+            ('-/Filter unread items',                       'FILTERUNREAD'),
+            ('-/-',                                         ),
+            ('-/Sort by time',                              'SORTBYTIME'),
+            ('-/Sort by time (desc.)',                      'SORTBYTIMEDESC'),
+            ('-/Sort by title',                             'SORTBYTITLE'),
+            ('-/Sort by title (desc.)',                     'SORTBYTITLEDESC'),
             ('&Help',                                       ),
             ('&Help/Online &Doc (not much now)',            'HELPDOC' ),
             ('&Help/Report a bug',                          'HELPBUG' ),
@@ -373,8 +438,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                     for accel in event['accels'][1:] :
                         accels.append(self.ConvertStringsToAccels(accel))
                     menu_path+='\t'+'+'.join(accel_main)
-
-                menu_content.append((menu_path,event['action'],event['help'],accels,event['id'],wx.Bitmap(os.path.join('..','res','toolbar',event['bitmap']+'.png'))))
+                menu_content.append((menu_path,event['action'],event['help'],accels,event['id'],self._get_bitmap(event['bitmap'])))
 
         self.SetMenuContent(self,menu_content)
 
@@ -398,7 +462,7 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
         for event_name in toolbar_order :
             if event_name in self._events :
                 event = self._events[event_name]
-                self._tool_bar.AddTool(event['id'],wx.Bitmap(os.path.join('..','res','toolbar',event['bitmap']+'.png')),shortHelpString=event['help'])
+                self._tool_bar.AddTool(event['id'],self._get_bitmap(event['bitmap']),shortHelpString=event['help'])
             else :
                 self._tool_bar.AddSeparator()
 
@@ -600,10 +664,11 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
             finally :
                 self._busy = None
 
-    def OpenItemInWebBrowser(self, position) :
-        link = self._rss_reader.get_link(position)
-        if link and link != '' :
-            webbrowser.open(link)
+    def OpenItemInWebBrowser(self, positions) :
+        for position in positions :
+            link = self._rss_reader.get_link(position)
+            if link and link != '' :
+                webbrowser.open(link)
 
     def OpenInWebBrowser(self, event=None) :
         self._busy = wx.BusyCursor()
@@ -726,6 +791,34 @@ class RSSReaderFrame(wx.Frame,MenuProvider):
                 self.Populate()
         finally :
             self._busy = None
+
+    def ViewAllItems(self, event=None) :
+        self._combo_filter.SetValue('')
+        self.OnComboChange()
+
+    def ViewUnreadItems(self, event=None) :
+        self._combo_filter.SetValue('-state:read')
+        self.OnComboChange()
+        
+    def FilterUnreadItems(self, event=None) :
+        self._combo_filter.AppendValue('-state:read')
+        self.OnComboChange()
+
+    def SortByTime(self, event=None) :
+        self._combo_filter.AppendValue('sort:crawled')
+        self.OnComboChange()
+
+    def SortByTimeDesc(self, event=None) :
+        self._combo_filter.AppendValue('-sort:crawled')
+        self.OnComboChange()
+
+    def SortByTitle(self, event=None) :
+        self._combo_filter.AppendValue('sort:title')
+        self.OnComboChange()
+
+    def SortByTitleDesc(self, event=None) :
+        self._combo_filter.AppendValue('-sort:title')
+        self.OnComboChange()
 
     def OnHelpDoc(self, event=None) :
         webbrowser.open('http://code.google.com/p/pyrfeed/wiki/pyrfeed')
@@ -855,6 +948,6 @@ class GuiInfoWx(GuiInfo) :
         return ""
 
 register_key( 'wx/sashposition', int, doc='Position of the Sash seperation in pixels', default=200 )
-register_key( 'wx/htmlwindow', str, doc='HTML Window component to use (simple/complex/best)', default='best' )
+register_key( 'wx/htmlwindow', str, doc='HTML Window component to use (simple/complex/best)', default='best', advanced=True )
 
 # 'gui/next' will be handled elsewere for registration

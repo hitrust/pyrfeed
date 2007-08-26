@@ -104,6 +104,6 @@ class RSSHtmlListBox(wx.HtmlListBox) :
         self.SelectItem()
 
 
-register_key( 'wx/htmllistbox/useimage', bool, doc='Use image for check/uncheck', default=True )
-register_key( 'wx/htmllistbox/usebold', bool, doc='Use bold for check', default=True )
+register_key( 'wx/htmllistbox/useimage', bool, doc='Use image for check/uncheck', default=True, advanced=True )
+register_key( 'wx/htmllistbox/usebold', bool, doc='Use bold for check', default=True, advanced=True )
 

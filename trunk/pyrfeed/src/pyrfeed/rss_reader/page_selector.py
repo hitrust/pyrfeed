@@ -27,22 +27,31 @@ class PageSelector(object):
 
     def process_current_item(self,action) :
         '''Process the current item with an action'''
-        return action(self.__cursor_position)
+        return action([self.__cursor_position])
 
-    def process_selected_items(self,action,callback=None) :
+    def process_selected_items(self,action,callback=None,selection=None) :
         '''Process the selected items with an action, using the callback for updating progression.'''
 
-        callback( position=-1, count=0, total=self.__selected_item_count )
+        if selection is None :
+            selection = filter(lambda item_position:self.__selected_items[item_position],xrange(self.__items_count))
 
-        if 0 < self.__selected_item_count :
+        callback( position=-1, count=0, total=len(selection) )
+
+        if 0 < len(selection) :
             item_courant=0
-            for item_position in xrange(self.__items_count) :
-                if self.__selected_items[item_position] :
-                    action(item_position)
-                    if callback is not None :
-                        callback( position=item_position, count=item_courant, total=self.__selected_item_count )
+            
+            item_step = 1+int(len(selection)/5.)
+            item_list = []
+            for item_position in selection :
+                    item_list.append(item_position)
+                    if len(item_list)>=item_step :
+                        action(item_list)
+                        item_courant += len(item_list)
+                        if callback is not None :
+                            callback( position=item_position, count=item_courant, total=len(selection) )
+                        item_list = []    
         else :
-            action(self.__cursor_position)
+            action([self.__cursor_position])
             if callback is not None :
                 callback( position=self.__cursor_position, count=1, total=1 )
 

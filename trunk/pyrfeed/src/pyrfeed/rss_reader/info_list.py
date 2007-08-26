@@ -23,4 +23,4 @@ class _RssReaderInfoList(ElementInfoList) :
 
 rssreader_info_list = _RssReaderInfoList()
 
-register_key( 'rssreader', str, doc='The RssReader to use', default=None )
+register_key( 'rssreader', str, doc='The RssReader to use', default=None, advanced=True )

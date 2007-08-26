@@ -1,6 +1,10 @@
 import wx
 
-class FilterControlCombo(wx.ComboBox) :
+class GenericFilterControl(object) :
+    def AppendValue(self,string) :
+        self.SetValue(self.GetValue()+' '+string)
+
+class FilterControlCombo(wx.ComboBox,GenericFilterControl) :
     def __init__(self,parent) :
         wx.ComboBox.__init__(self, parent, choices=[], style=wx.CB_DROPDOWN)
 
@@ -18,7 +22,7 @@ class FilterControlCombo(wx.ComboBox) :
     def ChangeDiffFilter(self,filters) :
         pass
 
-class FilterControlSearch(wx.SearchCtrl) :
+class FilterControlSearch(wx.SearchCtrl,GenericFilterControl) :
     def __init__(self,parent) :
         wx.SearchCtrl.__init__( self, parent, style=wx.TE_PROCESS_ENTER )
         self.ChangeDefaultFilter([])
@@ -44,7 +48,7 @@ class FilterControlSearch(wx.SearchCtrl) :
     def ChangeDiffFilter(self,filters) :
         pass
 
-class FilterControlPanelAbstract(wx.Panel) :
+class FilterControlPanelAbstract(wx.Panel,GenericFilterControl) :
     FilterClass = None
     def __init__(self,parent) :
         wx.Panel.__init__(self,parent)
@@ -98,10 +102,13 @@ class FilterControlPanelAbstract(wx.Panel) :
 
     def ChangeDefaultFilter(self,filters) :
         self._filter.ChangeDefaultFilter(filters)
+
     def SetValue(self,string) :
         self._filter.SetValue(string)
+
     def GetValue(self) :
         return self._filter.GetValue()
+
     def SetFocus(self) :
         return self._filter.SetFocus()
 
